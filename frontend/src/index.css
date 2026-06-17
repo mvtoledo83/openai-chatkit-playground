@@ -1,34 +1,58 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #eef6f3;
+  --foreground: #15352f;
+  --surface: rgba(255, 255, 255, 0.88);
+  --surface-strong: #ffffff;
+  --border-soft: rgba(21, 87, 72, 0.12);
+  --brand: #00a88e;
+  --brand-deep: #0d7f69;
+  --brand-mist: #dff5ef;
   color-scheme: light;
-}
-
-:root[data-color-scheme="dark"] {
-  --background: #0a0a0a;
-  --foreground: #ededed;
-  color-scheme: dark;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-color-scheme]) {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-    color-scheme: dark;
-  }
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: Arial, Helvetica, sans-serif;
+  --font-sans: "Segoe UI", "Helvetica Neue", Helvetica, Arial, sans-serif;
   --font-mono: SFMono-Regular, Consolas, "Liberation Mono", monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--background);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans);
+  min-height: 100vh;
+  background-image:
+    radial-gradient(circle at top left, rgba(0, 168, 142, 0.14), transparent 26%),
+    radial-gradient(circle at 85% 18%, rgba(97, 201, 183, 0.18), transparent 21%),
+    linear-gradient(180deg, #f7fbfa 0%, #eef6f3 47%, #edf3f1 100%);
+}
+
+#root {
+  min-height: 100vh;
+}
+
+.sanitas-shell {
+  position: relative;
+  overflow: hidden;
+}
+
+.sanitas-shell::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(120deg, rgba(255, 255, 255, 0.52), transparent 30%),
+    linear-gradient(180deg, transparent 0%, rgba(255, 255, 255, 0.22) 100%);
 }

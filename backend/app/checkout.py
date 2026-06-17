@@ -10,7 +10,7 @@ from uuid import uuid4
 import httpx
 from pydantic import BaseModel, Field, model_validator
 
-from chatkit.widgets import Button, Card, Markdown, Text, Title
+from chatkit.widgets import Button, Card, Col, Form, Input, Label, Markdown, Text, Title
 
 
 GETNET_AUTH_URL = os.getenv(
@@ -143,11 +143,598 @@ class CheckoutIntentResponse(BaseModel):
     flow: CheckoutFlow
 
 
+def normalize_flow(value: str | CheckoutFlow | None) -> CheckoutFlow:
+    if isinstance(value, CheckoutFlow):
+        return value
+    if isinstance(value, str):
+        return CheckoutFlow(value)
+    return CheckoutFlow.PAYMENT
+
+
+def build_checkout_flow_selector_widget() -> Card:
+    return Card(
+        id="checkout-flow-selector",
+        padding=16,
+        size="full",
+        background={"light": "surface-elevated", "dark": "surface-elevated"},
+        status={"text": "Experiencia guiada", "icon": "sparkle"},
+        children=[
+            Title(value="Escolha a jornada de checkout", size="lg"),
+            Markdown(
+                value=(
+                    "Uma coleta mais leve, clara e assistida. "
+                    "Os dados entram em etapas e o iframe so aparece no momento final."
+                )
+            ),
+            Text(
+                value="Selecione a alternativa que melhor combina com a necessidade do cliente.",
+                size="sm",
+                color="secondary",
+            ),
+            Button(
+                label="Pagamento padrao",
+                color="info",
+                variant="solid",
+                pill=True,
+                block=True,
+                onClickAction={
+                    "type": "checkout.flow.start",
+                    "payload": {"flow": CheckoutFlow.PAYMENT.value},
+                },
+            ),
+            Button(
+                label="Tokenizar cartao",
+                color="info",
+                variant="outline",
+                pill=True,
+                block=True,
+                onClickAction={
+                    "type": "checkout.flow.start",
+                    "payload": {"flow": CheckoutFlow.AI_AGENT.value},
+                },
+            ),
+            Button(
+                label="Verificar cartao",
+                color="info",
+                variant="outline",
+                pill=True,
+                block=True,
+                onClickAction={
+                    "type": "checkout.flow.start",
+                    "payload": {"flow": CheckoutFlow.CARD_VERIFICATION.value},
+                },
+            ),
+        ],
+    )
+
+
+def build_customer_form_widget(
+    flow: CheckoutFlow,
+    defaults: dict[str, Any] | None = None,
+    error_message: str | None = None,
+) -> Card:
+    values = defaults or {}
+    customer_name = str(values.get("customer_name", ""))
+    email = str(values.get("email", ""))
+    document_number = str(values.get("document_number", ""))
+    phone_number = str(values.get("phone_number", ""))
+    street = str(values.get("street", ""))
+    number = str(values.get("number", ""))
+    district = str(values.get("district", "Centro"))
+    city = str(values.get("city", ""))
+    state = str(values.get("state", ""))
+    postal_code = str(values.get("postal_code", ""))
+    country = str(values.get("country", "BR"))
+
+    children: list[Any] = [
+        Title(value="Etapa 1: Dados do cliente", size="lg"),
+        Text(value=f"Fluxo selecionado: {flow.value}", size="sm", color="secondary"),
+    ]
+
+    if error_message:
+        children.append(Text(value=error_message, size="sm", color="danger"))
+
+    children.append(
+        Form(
+            direction="col",
+            gap=4,
+            onSubmitAction={
+                "type": "checkout.flow.customer.submit",
+                "payload": {"flow": flow.value},
+            },
+            children=[
+                Col(
+                    gap=2,
+                    children=[
+                        Label(value="Nome completo", fieldName="customer_name"),
+                        Input(
+                            name="customer_name",
+                            required=True,
+                            defaultValue=customer_name,
+                            placeholder="Ex.: Ana Silva Costa",
+                        ),
+                    ],
+                ),
+                Col(
+                    gap=2,
+                    children=[
+                        Label(value="Email", fieldName="email"),
+                        Input(
+                            name="email",
+                            inputType="email",
+                            required=True,
+                            defaultValue=email,
+                            placeholder="nome@empresa.com",
+                        ),
+                    ],
+                ),
+                Col(
+                    gap=2,
+                    children=[
+                        Label(value="Documento (CPF/CNPJ)", fieldName="document_number"),
+                        Input(
+                            name="document_number",
+                            required=True,
+                            defaultValue=document_number,
+                            pattern=r"^[0-9\.\-/]{11,18}$",
+                            placeholder="Somente numeros ou formatado",
+                        ),
+                    ],
+                ),
+                Col(
+                    gap=2,
+                    children=[
+                        Label(value="Telefone", fieldName="phone_number"),
+                        Input(
+                            name="phone_number",
+                            required=True,
+                            defaultValue=phone_number,
+                            pattern=r"^\+?[0-9\s\-\(\)]{10,20}$",
+                            placeholder="Ex.: +55 11 98765-4321",
+                        ),
+                    ],
+                ),
+                Col(
+                    gap=2,
+                    children=[
+                        Label(value="Rua", fieldName="street"),
+                        Input(
+                            name="street",
+                            required=True,
+                            defaultValue=street,
+                            placeholder="Ex.: Rua Augusta",
+                        ),
+                    ],
+                ),
+                Col(
+                    gap=2,
+                    children=[
+                        Label(value="Numero", fieldName="number"),
+                        Input(
+                            name="number",
+                            required=True,
+                            defaultValue=number,
+                            pattern=r"^[0-9A-Za-z\-]{1,10}$",
+                            placeholder="Ex.: 2690",
+                        ),
+                    ],
+                ),
+                Col(
+                    gap=2,
+                    children=[
+                        Label(value="Bairro", fieldName="district"),
+                        Input(name="district", required=True, defaultValue=district),
+                    ],
+                ),
+                Col(
+                    gap=2,
+                    children=[
+                        Label(value="Cidade", fieldName="city"),
+                        Input(name="city", required=True, defaultValue=city),
+                    ],
+                ),
+                Col(
+                    gap=2,
+                    children=[
+                        Label(value="Estado", fieldName="state"),
+                        Input(
+                            name="state",
+                            required=True,
+                            defaultValue=state,
+                            pattern=r"^[A-Za-z]{2}$",
+                            placeholder="UF, ex.: SP",
+                        ),
+                    ],
+                ),
+                Col(
+                    gap=2,
+                    children=[
+                        Label(value="CEP", fieldName="postal_code"),
+                        Input(
+                            name="postal_code",
+                            required=True,
+                            defaultValue=postal_code,
+                            pattern=r"^[0-9\-]{8,10}$",
+                            placeholder="Ex.: 01412-100",
+                        ),
+                    ],
+                ),
+                Col(
+                    gap=2,
+                    children=[
+                        Label(value="Pais", fieldName="country"),
+                        Input(
+                            name="country",
+                            required=True,
+                            defaultValue=country,
+                            pattern=r"^[A-Za-z]{2}$",
+                            placeholder="Codigo ISO2, ex.: BR",
+                        ),
+                    ],
+                ),
+                Button(
+                    label="Continuar",
+                    color="info",
+                    variant="solid",
+                    pill=True,
+                    block=True,
+                    submit=True,
+                ),
+            ],
+        )
+    )
+
+    children.append(
+        Button(
+            label="Trocar jornada",
+            color="info",
+            variant="ghost",
+            pill=True,
+            onClickAction={"type": "checkout.flow.restart", "payload": {}},
+        )
+    )
+
+    return Card(
+        id=f"checkout-customer-form-{flow.value}-{uuid4().hex[:8]}",
+        padding=16,
+        size="full",
+        background={"light": "surface-elevated", "dark": "surface-elevated"},
+        status={"text": "Formulario conversacional", "icon": "sparkle"},
+        children=children,
+    )
+
+
+def build_payment_form_widget(
+    flow: CheckoutFlow,
+    defaults: dict[str, Any] | None = None,
+    error_message: str | None = None,
+) -> Card:
+    values = defaults or {}
+    amount = str(values.get("amount", "10000"))
+    currency = str(values.get("currency", "BRL"))
+    product_title = str(values.get("product_title", "Plano Starter"))
+    quantity = str(values.get("quantity", "1"))
+
+    children: list[Any] = [
+        Title(value="Etapa 2: Dados de pagamento", size="lg"),
+        Text(
+            value="Informe valor em centavos, produto e quantidade.",
+            size="sm",
+            color="secondary",
+        ),
+    ]
+
+    if error_message:
+        children.append(Text(value=error_message, size="sm", color="danger"))
+
+    children.append(
+        Form(
+            direction="col",
+            gap=4,
+            onSubmitAction={
+                "type": "checkout.flow.payment.submit",
+                "payload": {"flow": flow.value},
+            },
+            children=[
+                Col(
+                    gap=2,
+                    children=[
+                        Label(value="Moeda", fieldName="currency"),
+                        Input(
+                            name="currency",
+                            required=True,
+                            defaultValue=currency,
+                            pattern=r"^[A-Za-z]{3}$",
+                            placeholder="ISO 4217, ex.: BRL",
+                        ),
+                    ],
+                ),
+                Col(
+                    gap=2,
+                    children=[
+                        Label(value="Valor em centavos", fieldName="amount"),
+                        Input(
+                            name="amount",
+                            inputType="number",
+                            required=True,
+                            defaultValue=amount,
+                            pattern=r"^[0-9]{1,12}$",
+                            placeholder="Ex.: 10000",
+                        ),
+                    ],
+                ),
+                Col(
+                    gap=2,
+                    children=[
+                        Label(value="Titulo do produto", fieldName="product_title"),
+                        Input(
+                            name="product_title",
+                            required=True,
+                            defaultValue=product_title,
+                            placeholder="Ex.: Plano Starter",
+                        ),
+                    ],
+                ),
+                Col(
+                    gap=2,
+                    children=[
+                        Label(value="Quantidade", fieldName="quantity"),
+                        Input(
+                            name="quantity",
+                            inputType="number",
+                            required=True,
+                            defaultValue=quantity,
+                            pattern=r"^[0-9]{1,5}$",
+                            placeholder="Ex.: 1",
+                        ),
+                    ],
+                ),
+                Button(
+                    label="Revisar checkout",
+                    color="info",
+                    variant="solid",
+                    pill=True,
+                    block=True,
+                    submit=True,
+                ),
+            ],
+        )
+    )
+
+    children.append(
+        Button(
+            label="Voltar para dados do cliente",
+            color="info",
+            variant="ghost",
+            pill=True,
+            onClickAction={
+                "type": "checkout.flow.back",
+                "payload": {"flow": flow.value, "target": "customer"},
+            },
+        )
+    )
+
+    return Card(
+        id=f"checkout-payment-form-{flow.value}-{uuid4().hex[:8]}",
+        padding=16,
+        size="full",
+        background={"light": "surface-elevated", "dark": "surface-elevated"},
+        status={"text": "Formulario conversacional", "icon": "sparkle"},
+        children=children,
+    )
+
+
+def build_checkout_review_widget(request: CheckoutIntentRequest) -> Card:
+    payload = request.to_getnet_payload()
+    pretty_payload = str(payload).replace("{", "{\n").replace(",", ",\n")
+
+    return Card(
+        id=f"checkout-review-{request.flow.value}-{uuid4().hex[:8]}",
+        padding=16,
+        size="full",
+        background={"light": "surface-elevated", "dark": "surface-elevated"},
+        status={"text": "Revisao final", "icon": "sparkle"},
+        children=[
+            Title(value="Etapa final: confirmar checkout", size="lg"),
+            Text(
+                value=(
+                    "Confira os dados abaixo com calma. Quando estiver tudo certo, "
+                    "a etapa final abre o checkout hospedado."
+                ),
+                size="sm",
+                color="secondary",
+            ),
+            Markdown(value=f"```text\n{pretty_payload}\n```"),
+            Button(
+                label="Confirmar e gerar checkout",
+                color="info",
+                variant="solid",
+                pill=True,
+                block=True,
+                onClickAction={
+                    "type": "checkout.flow.confirm",
+                    "payload": {"flow": request.flow.value},
+                },
+            ),
+            Button(
+                label="Reiniciar jornada",
+                color="info",
+                variant="ghost",
+                pill=True,
+                block=True,
+                onClickAction={"type": "checkout.flow.restart", "payload": {}},
+            ),
+        ],
+    )
+
+
+def build_iframe_feedback_widget(status: str, payment_intent_id: str) -> Card:
+    if status == "completed":
+        title = "Pagamento sinalizado como concluido"
+        status_color = "success"
+        subtitle = "A conversa pode continuar com proximos passos do pedido."
+    elif status == "cancelled":
+        title = "Checkout cancelado pelo usuario"
+        status_color = "warning"
+        subtitle = "Voce pode retomar a jornada e tentar novamente."
+    else:
+        title = "Checkout marcado como pendente"
+        status_color = "secondary"
+        subtitle = "Confirme no extrato e finalize quando estiver pronto."
+
+    return Card(
+        id=f"checkout-feedback-{payment_intent_id}-{uuid4().hex[:8]}",
+        padding=16,
+        size="full",
+        background={"light": "surface-elevated", "dark": "surface-elevated"},
+        status={"text": "Retorno do iframe", "icon": "sparkle"},
+        children=[
+            Title(value=title, size="lg"),
+            Text(value=f"Payment intent: {payment_intent_id}", size="sm"),
+            Text(value=subtitle, size="sm", color=status_color),
+            Button(
+                label="Iniciar nova jornada",
+                color="info",
+                variant="outline",
+                pill=True,
+                block=True,
+                onClickAction={"type": "checkout.flow.restart", "payload": {}},
+            ),
+        ],
+    )
+
+
+def build_request_from_journey_data(
+    flow: CheckoutFlow,
+    customer_data: dict[str, Any],
+    payment_data: dict[str, Any] | None = None,
+) -> CheckoutIntentRequest:
+    payment_values = payment_data or {}
+
+    full_name = _normalized_text(customer_data.get("customer_name"), "Cliente Checkout")
+    first_name, last_name = split_name(full_name)
+    country = _normalized_country(customer_data.get("country"))
+
+    customer = Customer(
+        customer_id=str(customer_data.get("customer_id") or _document_id(customer_data)),
+        name=full_name,
+        first_name=first_name,
+        last_name=last_name,
+        email=_normalized_text(customer_data.get("email"), "checkout@example.com"),
+        checked_email=False,
+        document_type=str(customer_data.get("document_type", "CPF")).upper(),
+        document_number=_only_digits(customer_data.get("document_number"), "00000000000"),
+        phone_number=_only_digits(customer_data.get("phone_number"), "5511999999999"),
+        billing_address=BillingAddress(
+            street=_normalized_text(customer_data.get("street"), "Rua Demo"),
+            number=_normalized_text(customer_data.get("number"), "100"),
+            country=country,
+            postal_code=_only_digits(customer_data.get("postal_code"), "01001000"),
+            district=_normalized_text(customer_data.get("district"), "Centro"),
+            city=_normalized_text(customer_data.get("city"), "Sao Paulo"),
+            state=_normalized_state(customer_data.get("state")),
+            complement=str(customer_data.get("complement", "")) or None,
+        ),
+    )
+
+    order_id = str(customer_data.get("order_id") or f"ORDER_{uuid4().hex[:12].upper()}")
+
+    if flow == CheckoutFlow.PAYMENT:
+        amount = int(str(payment_values.get("amount", "10000")))
+        if amount <= 0:
+            raise ValueError("amount deve ser maior que zero")
+
+        quantity = int(str(payment_values.get("quantity", "1")))
+        if quantity <= 0:
+            raise ValueError("quantity deve ser maior que zero")
+
+        currency = _normalized_currency(payment_values.get("currency"))
+        product_title = _normalized_text(payment_values.get("product_title"), "Plano Starter")
+
+        return CheckoutIntentRequest(
+            flow=flow,
+            order_id=order_id,
+            country=country,
+            customer=customer,
+            payment=Payment(currency=currency, amount=amount),
+            product=[Product(title=product_title, value=amount, quantity=quantity)],
+            shipping=Shipping(
+                first_name=first_name,
+                last_name=last_name,
+                name=full_name,
+                phone_number=customer.phone_number,
+                address=ShippingAddress(
+                    street=customer.billing_address.street,
+                    number=customer.billing_address.number,
+                    country=customer.billing_address.country,
+                    postal_code=customer.billing_address.postal_code,
+                    district=customer.billing_address.district,
+                    city=customer.billing_address.city,
+                    state=customer.billing_address.state,
+                ),
+            ),
+        )
+
+    return CheckoutIntentRequest(
+        flow=flow,
+        order_id=order_id,
+        country=country,
+        customer=customer,
+    )
+
+
+def split_name(value: str) -> tuple[str, str]:
+    parts = [item for item in value.split() if item]
+    if not parts:
+        return ("Cliente", "Checkout")
+    if len(parts) == 1:
+        return (parts[0], "Checkout")
+    return (parts[0], " ".join(parts[1:]))
+
+
+def _document_id(customer_data: dict[str, Any]) -> str:
+    document = str(customer_data.get("document_number", "00000000000"))
+    digits = "".join(ch for ch in document if ch.isdigit())
+    return digits or "00000000000"
+
+
+def _normalized_text(value: Any, fallback: str) -> str:
+    text = str(value or "").strip()
+    return text or fallback
+
+
+def _only_digits(value: Any, fallback: str) -> str:
+    digits = "".join(ch for ch in str(value or "") if ch.isdigit())
+    return digits or fallback
+
+
+def _normalized_country(value: Any) -> str:
+    code = _normalized_text(value, "BR").upper()
+    if len(code) != 2 or not code.isalpha():
+        raise ValueError("country deve ser um codigo ISO2, por exemplo BR")
+    return code
+
+
+def _normalized_state(value: Any) -> str:
+    state = _normalized_text(value, "SP").upper()
+    if len(state) != 2 or not state.isalpha():
+        raise ValueError("state deve ter 2 letras, por exemplo SP")
+    return state
+
+
+def _normalized_currency(value: Any) -> str:
+    currency = _normalized_text(value, "BRL").upper()
+    if len(currency) != 3 or not currency.isalpha():
+        raise ValueError("currency deve ter 3 letras, por exemplo BRL")
+    return currency
+
+
 def build_checkout_result_widget(result: CheckoutIntentResponse) -> Card:
     return Card(
         id=f"checkout-result-{result.payment_intent_id}",
         padding=16,
         size="full",
+        background={"light": "surface-elevated", "dark": "surface-elevated"},
         status={"text": "Checkout criado", "icon": "check-circle"},
         children=[
             Title(value="Checkout iniciado", size="lg"),
@@ -169,6 +756,7 @@ def build_checkout_error_widget(error_message: str) -> Card:
         id=f"checkout-error-{uuid4().hex[:8]}",
         padding=16,
         size="full",
+        background={"light": "surface-elevated", "dark": "surface-elevated"},
         status={"text": "Falha ao iniciar checkout", "icon": "warning"},
         children=[
             Title(value="Nao foi possivel criar o checkout", size="lg"),
@@ -238,72 +826,7 @@ def build_demo_request(flow: CheckoutFlow) -> CheckoutIntentRequest:
 
 
 def build_checkout_widget() -> Card:
-    payment_request = build_demo_request(CheckoutFlow.PAYMENT)
-    ai_agent_request = build_demo_request(CheckoutFlow.AI_AGENT)
-    verification_request = build_demo_request(CheckoutFlow.CARD_VERIFICATION)
-
-    return Card(
-        id="checkout-root",
-        padding=16,
-        size="full",
-        status={"text": "Checkout alternatives", "icon": "sparkle"},
-        children=[
-            Title(value="Iniciar checkout na conversa", size="lg"),
-            Markdown(
-                value=(
-                    "Escolha o fluxo para testar no chat. "
-                    "O checkout será aberto sem sair da conversa."
-                )
-            ),
-            Text(
-                value=(
-                    "Pagamento padrão usa amount e produtos. "
-                    "Tokenização e verificação usam iframe direto."
-                ),
-                size="sm",
-                color="secondary",
-            ),
-            Button(
-                label="Checkout padrão",
-                style="primary",
-                block=True,
-                onClickAction={
-                    "type": "checkout.launch",
-                    "payload": {
-                        "checkoutRequest": payment_request.model_dump(
-                            exclude_none=True
-                        ),
-                    },
-                },
-            ),
-            Button(
-                label="Tokenizar cartão",
-                variant="outline",
-                block=True,
-                onClickAction={
-                    "type": "checkout.launch",
-                    "payload": {
-                        "checkoutRequest": ai_agent_request.model_dump(
-                            exclude_none=True
-                        ),
-                    },
-                },
-            ),
-            Button(
-                label="Verificar cartão",
-                variant="outline",
-                block=True,
-                onClickAction={
-                    "type": "checkout.launch",
-                    "payload": {
-                        "checkoutRequest": verification_request.model_dump(
-                            exclude_none=True
-                        ),
-                    },
-                },
-            ),
-        ],
-    )
+    return build_checkout_flow_selector_widget()
 
 
 @dataclass(slots=True)

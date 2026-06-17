@@ -1,0 +1,148 @@
+{
+  "threads": {
+    "thr_41415395": {
+      "id": "thr_41415395",
+      "created_at": "2026-06-17T15:24:45.685037",
+      "status": {
+        "type": "active"
+      },
+      "metadata": {}
+    }
+  },
+  "items": {
+    "thr_41415395": [
+      {
+        "id": "msg_0599d7a6",
+        "thread_id": "thr_41415395",
+        "created_at": "2026-06-17T15:24:45.692592",
+        "type": "user_message",
+        "content": [
+          {
+            "type": "input_text",
+            "text": "Boa tarde"
+          }
+        ],
+        "attachments": [],
+        "quoted_text": "",
+        "inference_options": {}
+      },
+      {
+        "id": "msg_01834dc66f1f4711006a32e66ff34481a0a916f7caf823e8b1",
+        "thread_id": "thr_41415395",
+        "created_at": "2026-06-17T15:24:48.428457",
+        "type": "assistant_message",
+        "content": [
+          {
+            "annotations": [],
+            "text": "Boa tarde! Como posso ajudar voc\u00ea hoje?",
+            "type": "output_text"
+          }
+        ]
+      },
+      {
+        "id": "msg_5f26687f",
+        "thread_id": "thr_41415395",
+        "created_at": "2026-06-17T15:24:55.210429",
+        "type": "user_message",
+        "content": [
+          {
+            "type": "input_text",
+            "text": "checkout"
+          }
+        ],
+        "attachments": [],
+        "quoted_text": "",
+        "inference_options": {}
+      },
+      {
+        "id": "msg_47bede84",
+        "thread_id": "thr_41415395",
+        "created_at": "2026-06-17T15:24:55.215516",
+        "type": "widget",
+        "widget": {
+          "id": "checkout-flow-selector",
+          "type": "Card",
+          "children": [
+            {
+              "type": "Title",
+              "value": "Escolha a jornada de checkout",
+              "size": "lg"
+            },
+            {
+              "type": "Markdown",
+              "value": "Uma coleta mais leve, clara e assistida. Os dados entram em etapas e o iframe so aparece no momento final."
+            },
+            {
+              "type": "Text",
+              "value": "Selecione a alternativa que melhor combina com a necessidade do cliente.",
+              "color": "secondary",
+              "size": "sm"
+            },
+            {
+              "type": "Button",
+              "label": "Pagamento padrao",
+              "onClickAction": {
+                "type": "checkout.flow.start",
+                "payload": {
+                  "flow": "payment"
+                },
+                "handler": "server",
+                "loadingBehavior": "auto",
+                "streaming": true
+              },
+              "color": "info",
+              "variant": "solid",
+              "pill": true,
+              "block": true
+            },
+            {
+              "type": "Button",
+              "label": "Tokenizar cartao",
+              "onClickAction": {
+                "type": "checkout.flow.start",
+                "payload": {
+                  "flow": "ai_agent"
+                },
+                "handler": "server",
+                "loadingBehavior": "auto",
+                "streaming": true
+              },
+              "color": "info",
+              "variant": "outline",
+              "pill": true,
+              "block": true
+            },
+            {
+              "type": "Button",
+              "label": "Verificar cartao",
+              "onClickAction": {
+                "type": "checkout.flow.start",
+                "payload": {
+                  "flow": "card_verification"
+                },
+                "handler": "server",
+                "loadingBehavior": "auto",
+                "streaming": true
+              },
+              "color": "info",
+              "variant": "outline",
+              "pill": true,
+              "block": true
+            }
+          ],
+          "background": {
+            "dark": "surface-elevated",
+            "light": "surface-elevated"
+          },
+          "size": "full",
+          "padding": 16.0,
+          "status": {
+            "text": "Experiencia guiada",
+            "icon": "sparkle"
+          }
+        },
+        "copy_text": "Escolha uma alternativa de checkout para continuar."
+      }
+    ]
+  }
+}

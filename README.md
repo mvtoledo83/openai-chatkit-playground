@@ -61,7 +61,7 @@ backend/
     main.py          # API FastAPI e proxy do ChatKit
     server.py        # lógica conversacional e action do checkout
     checkout.py      # modelos, widgets e cliente Getnet
-    memory_store.py  # store em memória para threads e itens
+    memory_store.py  # store com snapshot em disco para threads e itens
 frontend/
   src/
     App.tsx
@@ -167,11 +167,22 @@ Quando essa action chega ao backend:
 
 ### Persistência do último checkout
 
-O repositório usa um store em memória. Isso significa que:
+O repositório usa uma store com memória + snapshot local em arquivo JSON. Isso significa que:
 
-- o estado dura enquanto o processo está vivo;
-- reiniciar o backend apaga threads e checkouts salvos;
-- a solução é ideal para demo e desenvolvimento local.
+- o estado fica disponível após reiniciar o backend;
+- por padrão, os dados ficam em `backend/.chatkit_store.json`;
+- você pode trocar o caminho com `CHATKIT_STORE_FILE`.
+
+Ainda é uma abordagem para desenvolvimento local. Em produção, prefira banco com controle de concorrência, backup e auditoria.
+
+### Teste do parser de payload de formulário
+
+Para validar os formatos de payload de submit aceitos no backend (ex.: `formData`, `fields[]` e campos no root), rode:
+
+```bash
+cd backend
+.venv/Scripts/python -m app.payload_parser_test
+```
 
 ## Fluxos de checkout suportados
 
