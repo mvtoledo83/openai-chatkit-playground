@@ -120,7 +120,7 @@ export function ChatKitPanel() {
 
   return (
     <>
-      <div className="relative flex h-[90vh] w-full flex-col overflow-hidden rounded-[2rem] border border-emerald-200/80 bg-white/92 shadow-[0_28px_80px_rgba(13,127,105,0.14)] backdrop-blur-xl">
+      <div className="relative flex h-full min-h-[80vh] w-full flex-col overflow-hidden rounded-[2rem] border border-emerald-200/80 bg-white/92 shadow-[0_28px_80px_rgba(13,127,105,0.14)] backdrop-blur-xl">
         <div className="pointer-events-none absolute inset-x-0 top-0 h-28 bg-gradient-to-r from-emerald-100/80 via-white to-cyan-50/70" />
         <div className="relative flex items-center justify-between border-b border-emerald-100/90 px-6 py-5">
           <div>
@@ -149,7 +149,9 @@ export function ChatKitPanel() {
         redirectUrl={checkoutState.redirectUrl}
         error={checkoutState.error}
         submittingFeedback={submittingFeedback}
-        onFeedback={submitIframeFeedback}
+        onFeedback={(status) => {
+          void submitIframeFeedback(status);
+        }}
         onClose={() =>
           setCheckoutState((current) => ({
             ...current,

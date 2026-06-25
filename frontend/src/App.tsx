@@ -1,13 +1,229 @@
+import { useCallback, useEffect, useState } from "react";
 import { ChatKitPanel } from "./components/ChatKitPanel";
+import { AppHeader } from "./components/layout/AppHeader";
+import { AppSidebar } from "./components/layout/AppSidebar";
+import { CardRegistrationModal } from "./components/modals/CardRegistrationModal";
+import {
+  getSavedCards,
+  deleteCard,
+  type CardRegistrationResult,
+  type SavedCardSummary,
+} from "./lib/cards";
+import { CARDS_REAL_MODE } from "./lib/config";
+
+type AppSection = "chat" | "cards";
 
 export default function App() {
+  const [activeSection, setActiveSection] = useState<AppSection>("chat");
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+  const [cardModalOpen, setCardModalOpen] = useState(false);
+  const [cardSavedNotice, setCardSavedNotice] = useState<string | null>(null);
+  const [savedCards, setSavedCards] = useState<SavedCardSummary[]>([]);
+  const [cardsLoading, setCardsLoading] = useState(false);
+  const [cardsError, setCardsError] = useState<string | null>(null);
+  const [deletingCardId, setDeletingCardId] = useState<string | null>(null);
+
+  const openCardModal = () => {
+    setCardSavedNotice(null);
+    setCardModalOpen(true);
+  };
+
+  const handleDeleteCard = async (cardId: string) => {
+    try {
+      setDeletingCardId(cardId);
+      setCardsError(null);
+      await deleteCard(cardId);
+      setSavedCards((current) => current.filter((c) => c.id !== cardId));
+      setCardSavedNotice("Cartão deletado com sucesso.");
+    } catch (error) {
+      setCardsError(
+        error instanceof Error
+          ? error.message
+          : "Não foi possível deletar o cartão.",
+      );
+    } finally {
+      setDeletingCardId(null);
+    }
+  };
+
+  const loadCards = useCallback(async () => {
+    if (!CARDS_REAL_MODE) {
+      return;
+    }
+
+    try {
+      setCardsLoading(true);
+      setCardsError(null);
+      const cards = await getSavedCards();
+      setSavedCards(cards);
+    } catch (error) {
+      setCardsError(
+        error instanceof Error
+          ? error.message
+          : "Nao foi possivel carregar cartoes salvos.",
+      );
+    } finally {
+      setCardsLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (activeSection !== "cards") {
+      return;
+    }
+
+    void loadCards();
+  }, [activeSection, loadCards]);
+
+  const handleCardSaved = (savedCard: CardRegistrationResult) => {
+    if (!CARDS_REAL_MODE) {
+      setSavedCards((current) => [
+        {
+          id: savedCard.cardId,
+          label: savedCard.label,
+          brand: savedCard.brand,
+          last4: savedCard.last4,
+          cardholderName: savedCard.cardholderName,
+        },
+        ...current,
+      ]);
+    }
+
+    setCardSavedNotice(`Cartao '${savedCard.label}' cadastrado com sucesso.`);
+    setActiveSection("cards");
+
+    if (CARDS_REAL_MODE) {
+      void loadCards();
+    }
+  };
+
   return (
-    <main className="sanitas-shell min-h-screen">
-      <section className="mx-auto flex min-h-screen w-full max-w-none flex-col px-3 py-5 md:px-6 md:py-6">
-        <div className="min-h-[90vh] w-full">
-          <ChatKitPanel />
+    <main className="sanitas-shell flex min-h-screen flex-col">
+      <AppHeader
+        onOpenCardModal={openCardModal}
+        onOpenSidebar={() => setMobileSidebarOpen(true)}
+      />
+
+      <section className="mx-auto flex min-h-0 w-full max-w-none flex-1 px-3 pb-4 pt-3 md:px-6 md:pb-6 md:pt-4">
+        <div className="flex min-h-0 w-full gap-3 md:gap-4">
+          <AppSidebar
+            activeSection={activeSection}
+            mobileOpen={mobileSidebarOpen}
+            onCloseMobile={() => setMobileSidebarOpen(false)}
+            onSelectSection={(section) => {
+              setActiveSection(section);
+              setMobileSidebarOpen(false);
+            }}
+          />
+
+          <div className="min-h-0 flex-1 overflow-hidden">
+            {activeSection === "chat" ? (
+              <ChatKitPanel />
+            ) : (
+              <section className="relative flex h-full min-h-[80vh] w-full flex-col overflow-hidden rounded-[2rem] border border-emerald-200/80 bg-white/92 p-6 shadow-[0_28px_80px_rgba(13,127,105,0.14)] backdrop-blur-xl md:p-8">
+                <div className="pointer-events-none absolute inset-x-0 top-0 h-28 bg-gradient-to-r from-emerald-100/80 via-white to-cyan-50/70" />
+                <div className="relative">
+                  <p className="text-[0.68rem] font-semibold uppercase tracking-[0.28em] text-emerald-700">
+                    Cartoes salvos
+                  </p>
+                  <h2 className="mt-2 text-2xl font-semibold text-slate-900">
+                    Gerencie seus cartoes cadastrados
+                  </h2>
+                  <p className="mt-2 max-w-2xl text-sm text-slate-600">
+                    Esta area esta preparada para listar os cartoes quando o
+                    servico da GetNet for conectado.
+                  </p>
+                </div>
+
+                <div className="relative mt-8 flex flex-1 items-center justify-center rounded-[1.5rem] border border-dashed border-emerald-200 bg-emerald-50/55 p-8 text-center">
+                  {cardsLoading ? (
+                    <div>
+                      <p className="text-base font-medium text-emerald-900">
+                        Carregando cartoes salvos...
+                      </p>
+                    </div>
+                  ) : cardsError ? (
+                    <div>
+                      <p className="text-base font-medium text-rose-700">
+                        {cardsError}
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          void loadCards();
+                        }}
+                        className="mt-3 rounded-full border border-emerald-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-emerald-50"
+                      >
+                        Tentar novamente
+                      </button>
+                    </div>
+                  ) : savedCards.length > 0 ? (
+                    <div className="w-full max-w-3xl space-y-3 text-left">
+                      {savedCards.map((savedCard) => (
+                        <article
+                          key={savedCard.id}
+                          className="rounded-2xl border border-emerald-200 bg-white px-4 py-3 shadow-[0_10px_26px_rgba(13,127,105,0.08)]"
+                        >
+                          <div className="flex flex-wrap items-center justify-between gap-2">
+                            <div className="flex-1">
+                              <p className="text-sm font-semibold text-slate-900">
+                                {savedCard.label}
+                              </p>
+                              <p className="mt-1 text-sm text-slate-600">
+                                Titular: {savedCard.cardholderName}
+                              </p>
+                              <p className="mt-1 text-xs text-slate-500">
+                                Final {savedCard.last4}
+                              </p>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <span className="rounded-full border border-emerald-100 bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-800">
+                                {savedCard.brand}
+                              </span>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  void handleDeleteCard(savedCard.id);
+                                }}
+                                disabled={deletingCardId === savedCard.id}
+                                className="rounded-full border border-rose-200 bg-rose-50 px-3 py-1 text-xs font-medium text-rose-700 transition hover:bg-rose-100 disabled:cursor-not-allowed disabled:opacity-60"
+                              >
+                                {deletingCardId === savedCard.id ? "Deletando..." : "Deletar"}
+                              </button>
+                            </div>
+                          </div>
+                        </article>
+                      ))}
+                    </div>
+                  ) : (
+                    <div>
+                      <p className="text-base font-medium text-emerald-900">
+                        Nenhum cartao exibido nesta versao
+                      </p>
+                      <p className="mt-2 text-sm text-slate-600">
+                        Use o botao no cabecalho para cadastrar seu primeiro
+                        cartao.
+                      </p>
+                    </div>
+                  )}
+                </div>
+
+                {cardSavedNotice ? (
+                  <p className="relative mt-4 rounded-full border border-emerald-200 bg-white px-4 py-2 text-sm text-emerald-800">
+                    {cardSavedNotice}
+                  </p>
+                ) : null}
+              </section>
+            )}
+          </div>
         </div>
       </section>
+
+      <CardRegistrationModal
+        open={cardModalOpen}
+        onClose={() => setCardModalOpen(false)}
+        onSaved={handleCardSaved}
+      />
     </main>
   );
 }

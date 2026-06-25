@@ -87,18 +87,30 @@ docs/
 ### Backend
 
 - `OPENAI_API_KEY`: obrigatório para o ChatKit backend.
-- `GETNET_CLIENT_ID`: obrigatório para autenticação OAuth2 na Getnet.
-- `GETNET_CLIENT_SECRET`: obrigatório para autenticação OAuth2 na Getnet.
+- `GETNET_CLIENT_ID`: obrigatório para autenticação OAuth2 na Getnet (checkout).
+- `GETNET_CLIENT_SECRET`: obrigatório para autenticação OAuth2 na Getnet (checkout).
+- `GETNET_CLIENT_ID_API`: obrigatório para autenticação OAuth2 no wallet sandbox.
+- `GETNET_CLIENT_SECRET_API`: obrigatório para autenticação OAuth2 no wallet sandbox.
 - `GETNET_AUTH_URL`: opcional, padrão `https://api.pre.globalgetnet.com/authentication/oauth2/access_token`.
 - `GETNET_PAYMENT_INTENT_URL`: opcional, padrão `https://api.pre.globalgetnet.com/dpy/web-checkout/v1/payment-intent`.
+- `GETNET_WALLET_API_BASE_URL`: opcional, padrão `https://api.app.dev.gms.corp/gai/agentic-commerce/v1`.
+- `GETNET_WALLET_CARDS_URL`: opcional, padrão `${GETNET_WALLET_API_BASE_URL}/wallets/cards`.
 
-O backend também tenta ler `GETNET_CLIENT_ID` e `GETNET_CLIENT_SECRET` de `backend/.env` se elas não estiverem presentes no ambiente.
+O backend tenta ler essas variáveis do ambiente, de `backend/.env`, da raiz do repositório e também de `frontend/.env`.
 
 ### Frontend
 
 - `VITE_CHATKIT_API_URL`: opcional, padrão `/chatkit`.
 - `VITE_CHECKOUT_API_URL`: opcional, padrão `/checkout/intents`.
 - `VITE_CHATKIT_API_DOMAIN_KEY`: opcional, padrão `domain_pk_localhost_dev`.
+- `VITE_ENABLE_CARDS_API`: opcional, padrão `false`. Quando `true`, ativa chamada real para cadastro de cartão via backend.
+- `VITE_CARDS_API_URL`: opcional. Se informado, sobrescreve a URL de cartões; caso contrário usa `/wallet/cards`.
+- `VITE_ENABLE_OIDC`: opcional, padrão `false`. Quando `true`, habilita fluxo OIDC com `@axa-fr/react-oidc`.
+- `VITE_OIDC_AUTHORITY`: opcional, padrão `https://am.infra.dev.gms.corp/oauth2/SanAzureAd`.
+- `VITE_OIDC_CLIENT_ID`: obrigatório quando `VITE_ENABLE_OIDC=true`.
+- `VITE_OIDC_SCOPE`: opcional, padrão `openid profile`.
+- `VITE_OIDC_REDIRECT_PATH`: opcional, padrão `/authentication/callback`.
+- `VITE_OIDC_POST_LOGOUT_REDIRECT_PATH`: opcional, padrão `/`.
 
 ### Arquivo `.env.local`
 

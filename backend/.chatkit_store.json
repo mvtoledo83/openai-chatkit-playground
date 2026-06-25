@@ -1,8 +1,16 @@
 {
   "threads": {
-    "thr_41415395": {
-      "id": "thr_41415395",
-      "created_at": "2026-06-17T15:24:45.685037",
+    "thr_c0941874": {
+      "id": "thr_c0941874",
+      "created_at": "2026-06-25T11:33:43.201065",
+      "status": {
+        "type": "active"
+      },
+      "metadata": {}
+    },
+    "thr_29495b37": {
+      "id": "thr_29495b37",
+      "created_at": "2026-06-25T14:29:10.759626",
       "status": {
         "type": "active"
       },
@@ -10,16 +18,16 @@
     }
   },
   "items": {
-    "thr_41415395": [
+    "thr_c0941874": [
       {
-        "id": "msg_0599d7a6",
-        "thread_id": "thr_41415395",
-        "created_at": "2026-06-17T15:24:45.692592",
+        "id": "msg_262c9b6e",
+        "thread_id": "thr_c0941874",
+        "created_at": "2026-06-25T11:33:43.209331",
         "type": "user_message",
         "content": [
           {
             "type": "input_text",
-            "text": "Boa tarde"
+            "text": "Bom dia"
           }
         ],
         "attachments": [],
@@ -27,27 +35,29 @@
         "inference_options": {}
       },
       {
-        "id": "msg_01834dc66f1f4711006a32e66ff34481a0a916f7caf823e8b1",
-        "thread_id": "thr_41415395",
-        "created_at": "2026-06-17T15:24:48.428457",
+        "id": "msg_06e84d0e9852366b006a3d3c4d494881a2a9df4f9f7678c951",
+        "thread_id": "thr_c0941874",
+        "created_at": "2026-06-25T11:33:51.115702",
         "type": "assistant_message",
         "content": [
           {
             "annotations": [],
-            "text": "Boa tarde! Como posso ajudar voc\u00ea hoje?",
+            "text": "Bom dia! Como posso ajudar voc\u00ea hoje?",
             "type": "output_text"
           }
         ]
-      },
+      }
+    ],
+    "thr_29495b37": [
       {
-        "id": "msg_5f26687f",
-        "thread_id": "thr_41415395",
-        "created_at": "2026-06-17T15:24:55.210429",
+        "id": "msg_aec5004b",
+        "thread_id": "thr_29495b37",
+        "created_at": "2026-06-25T14:29:10.777399",
         "type": "user_message",
         "content": [
           {
             "type": "input_text",
-            "text": "checkout"
+            "text": "bom dia"
           }
         ],
         "attachments": [],
@@ -55,93 +65,17 @@
         "inference_options": {}
       },
       {
-        "id": "msg_47bede84",
-        "thread_id": "thr_41415395",
-        "created_at": "2026-06-17T15:24:55.215516",
-        "type": "widget",
-        "widget": {
-          "id": "checkout-flow-selector",
-          "type": "Card",
-          "children": [
-            {
-              "type": "Title",
-              "value": "Escolha a jornada de checkout",
-              "size": "lg"
-            },
-            {
-              "type": "Markdown",
-              "value": "Uma coleta mais leve, clara e assistida. Os dados entram em etapas e o iframe so aparece no momento final."
-            },
-            {
-              "type": "Text",
-              "value": "Selecione a alternativa que melhor combina com a necessidade do cliente.",
-              "color": "secondary",
-              "size": "sm"
-            },
-            {
-              "type": "Button",
-              "label": "Pagamento padrao",
-              "onClickAction": {
-                "type": "checkout.flow.start",
-                "payload": {
-                  "flow": "payment"
-                },
-                "handler": "server",
-                "loadingBehavior": "auto",
-                "streaming": true
-              },
-              "color": "info",
-              "variant": "solid",
-              "pill": true,
-              "block": true
-            },
-            {
-              "type": "Button",
-              "label": "Tokenizar cartao",
-              "onClickAction": {
-                "type": "checkout.flow.start",
-                "payload": {
-                  "flow": "ai_agent"
-                },
-                "handler": "server",
-                "loadingBehavior": "auto",
-                "streaming": true
-              },
-              "color": "info",
-              "variant": "outline",
-              "pill": true,
-              "block": true
-            },
-            {
-              "type": "Button",
-              "label": "Verificar cartao",
-              "onClickAction": {
-                "type": "checkout.flow.start",
-                "payload": {
-                  "flow": "card_verification"
-                },
-                "handler": "server",
-                "loadingBehavior": "auto",
-                "streaming": true
-              },
-              "color": "info",
-              "variant": "outline",
-              "pill": true,
-              "block": true
-            }
-          ],
-          "background": {
-            "dark": "surface-elevated",
-            "light": "surface-elevated"
-          },
-          "size": "full",
-          "padding": 16.0,
-          "status": {
-            "text": "Experiencia guiada",
-            "icon": "sparkle"
+        "id": "msg_07d2f4fd731059cf006a3d656901ac819ca6fb370013061a86",
+        "thread_id": "thr_29495b37",
+        "created_at": "2026-06-25T14:29:14.501541",
+        "type": "assistant_message",
+        "content": [
+          {
+            "annotations": [],
+            "text": "Bom dia! Como posso ajudar voc\u00ea hoje?",
+            "type": "output_text"
           }
-        },
-        "copy_text": "Escolha uma alternativa de checkout para continuar."
+        ]
       }
     ]
   }

@@ -4,11 +4,16 @@ from __future__ import annotations
 
 from fastapi import HTTPException
 from chatkit.server import StreamingResult
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Header, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, Response, StreamingResponse
 
-from .checkout import CheckoutIntentRequest, GetnetClient
+from .checkout import (
+    CheckoutIntentRequest,
+    GetnetClient,
+    GetnetWalletClient,
+    WalletCardCreateRequest,
+)
 from .server import StarterChatServer
 
 app = FastAPI(title="ChatKit Starter API")
@@ -24,6 +29,28 @@ app.add_middleware(
 chatkit_server = StarterChatServer()
 
 
+def _extract_bearer_token(authorization: str | None) -> str | None:
+    if not authorization:
+        return None
+    parts = authorization.split(" ", 1)
+    if len(parts) == 2 and parts[0].lower() == "bearer":
+        return parts[1].strip() or None
+    return authorization.strip() or None
+
+
+@app.get("/wallet/token")
+async def get_wallet_access_token() -> JSONResponse:
+    try:
+        client = GetnetWalletClient.from_env()
+        token_info = await client.fetch_access_token()
+    except RuntimeError as exc:
+        raise HTTPException(status_code=500, detail=str(exc)) from exc
+    except Exception as exc:  # pragma: no cover - surfaced to the UI for debugging
+        raise HTTPException(status_code=502, detail=str(exc)) from exc
+
+    return JSONResponse(token_info)
+
+
 @app.post("/checkout/intents")
 async def create_checkout_intent(request: CheckoutIntentRequest) -> JSONResponse:
     try:
@@ -35,6 +62,56 @@ async def create_checkout_intent(request: CheckoutIntentRequest) -> JSONResponse
         raise HTTPException(status_code=502, detail=str(exc)) from exc
 
     return JSONResponse(result.model_dump())
+
+
+@app.get("/wallet/cards")
+async def list_wallet_cards(
+    authorization: str | None = Header(default=None),
+) -> JSONResponse:
+    try:
+        client = GetnetWalletClient.from_env()
+        access_token = _extract_bearer_token(authorization)
+        result = await client.list_cards(access_token=access_token)
+    except RuntimeError as exc:
+        raise HTTPException(status_code=500, detail=str(exc)) from exc
+    except Exception as exc:  # pragma: no cover - surfaced to the UI for debugging
+        raise HTTPException(status_code=502, detail=str(exc)) from exc
+
+    return JSONResponse(result)
+
+
+@app.post("/wallet/cards")
+async def create_wallet_card(
+    request: WalletCardCreateRequest,
+    authorization: str | None = Header(default=None),
+) -> JSONResponse:
+    try:
+        client = GetnetWalletClient.from_env()
+        access_token = _extract_bearer_token(authorization)
+        result = await client.create_card(request, access_token=access_token)
+    except RuntimeError as exc:
+        raise HTTPException(status_code=500, detail=str(exc)) from exc
+    except Exception as exc:  # pragma: no cover - surfaced to the UI for debugging
+        raise HTTPException(status_code=502, detail=str(exc)) from exc
+
+    return JSONResponse(result)
+
+
+@app.delete("/wallet/cards/{card_id}")
+async def delete_wallet_card(
+    card_id: str,
+    authorization: str | None = Header(default=None),
+) -> JSONResponse:
+    try:
+        client = GetnetWalletClient.from_env()
+        access_token = _extract_bearer_token(authorization)
+        await client.delete_card(card_id, access_token=access_token)
+    except RuntimeError as exc:
+        raise HTTPException(status_code=500, detail=str(exc)) from exc
+    except Exception as exc:  # pragma: no cover - surfaced to the UI for debugging
+        raise HTTPException(status_code=502, detail=str(exc)) from exc
+
+    return JSONResponse({"success": True, "card_id": card_id})
 
 
 @app.get("/checkout/threads/{thread_id}/latest")

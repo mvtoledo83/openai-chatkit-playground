@@ -14,6 +14,7 @@
     "npm": ">=9"
   },
   "dependencies": {
+    "@axa-fr/react-oidc": "^7.27.19",
     "@openai/chatkit-react": ">=1.1.1 <2.0.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"

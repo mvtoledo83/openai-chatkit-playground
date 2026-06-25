@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 import os
 from pathlib import Path
 from dataclasses import dataclass
@@ -9,6 +10,14 @@ from uuid import uuid4
 
 import httpx
 from pydantic import BaseModel, Field, model_validator
+
+logger = logging.getLogger("uvicorn.error")
+
+
+def _mask_token(token: str) -> str:
+    if len(token) <= 12:
+        return "*" * len(token)
+    return f"{token[:8]}...{token[-4:]}"
 
 from chatkit.widgets import Button, Card, Col, Form, Input, Label, Markdown, Text, Title
 
@@ -20,6 +29,14 @@ GETNET_AUTH_URL = os.getenv(
 GETNET_PAYMENT_INTENT_URL = os.getenv(
     "GETNET_PAYMENT_INTENT_URL",
     "https://api.pre.globalgetnet.com/dpy/web-checkout/v1/payment-intent",
+)
+GETNET_WALLET_API_BASE_URL = os.getenv(
+    "GETNET_WALLET_API_BASE_URL",
+    "https://api.pre.globalgetnet.com/ai-toolkit/v1",
+)
+GETNET_WALLET_CARDS_URL = os.getenv(
+    "GETNET_WALLET_CARDS_URL",
+    f"{GETNET_WALLET_API_BASE_URL}/cards",
 )
 
 
@@ -141,6 +158,16 @@ class CheckoutIntentResponse(BaseModel):
     redirect_url: str
     access_token: str | None = None
     flow: CheckoutFlow
+
+
+class WalletCardCreateRequest(BaseModel):
+    card_number: str
+    customer_id: str
+    brand: str
+    cardholder_name: str
+    expiration_month: str
+    expiration_year: str
+    security_code: str | None = None
 
 
 def normalize_flow(value: str | CheckoutFlow | None) -> CheckoutFlow:
@@ -838,15 +865,15 @@ class GetnetClient:
 
     @classmethod
     def from_env(cls) -> "GetnetClient":
-        client_id = os.getenv("GETNET_CLIENT_ID") or _read_env_file_value(
-            "GETNET_CLIENT_ID"
+        client_id = _read_first_available_env_value(
+            ["GETNET_CLIENT_ID", "GETNET_CLIENT_ID_API"]
         )
-        client_secret = os.getenv("GETNET_CLIENT_SECRET") or _read_env_file_value(
-            "GETNET_CLIENT_SECRET"
+        client_secret = _read_first_available_env_value(
+            ["GETNET_CLIENT_SECRET", "GETNET_CLIENT_SECRET_API"]
         )
         if not client_id or not client_secret:
             raise RuntimeError(
-                "GETNET_CLIENT_ID and GETNET_CLIENT_SECRET must be set to create checkout intents"
+                "GETNET_CLIENT_ID/GETNET_CLIENT_SECRET (or *_API variants) must be set to create checkout intents"
             )
         return cls(client_id=client_id, client_secret=client_secret)
 
@@ -905,6 +932,118 @@ class GetnetClient:
         return token
 
 
+@dataclass(slots=True)
+class GetnetWalletClient:
+    client_id: str
+    client_secret: str
+    auth_url: str = GETNET_AUTH_URL
+    cards_url: str = GETNET_WALLET_CARDS_URL
+
+    @classmethod
+    def from_env(cls) -> "GetnetWalletClient":
+        client_id = _read_first_available_env_value(["GETNET_CLIENT_ID_API"])
+        client_secret = _read_first_available_env_value(["GETNET_CLIENT_SECRET_API"])
+
+        if not client_id or not client_secret:
+            raise RuntimeError(
+                "GETNET_CLIENT_ID_API and GETNET_CLIENT_SECRET_API must be set to access wallet endpoints"
+            )
+
+        return cls(client_id=client_id, client_secret=client_secret)
+
+    async def fetch_access_token(self) -> dict[str, Any]:
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            return await self._request_access_token(client)
+
+    async def list_cards(self, access_token: str | None = None) -> Any:
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            token = access_token or await self._get_access_token(client)
+            response = await client.get(
+                self.cards_url,
+                headers={"Authorization": f"Bearer {token}"},
+            )
+            if response.status_code >= 400:
+                raise RuntimeError(
+                    "Getnet wallet list_cards failed "
+                    f"({response.status_code}): {response.text}"
+                )
+            return response.json()
+
+    async def create_card(
+        self,
+        payload: WalletCardCreateRequest,
+        access_token: str | None = None,
+    ) -> Any:
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            token = access_token or await self._get_access_token(client)
+            authorization = f"Bearer {token}"
+            body = payload.model_dump(exclude_none=True)
+            logger.info(
+                "POST %s | Authorization: Bearer %s | body=%s",
+                self.cards_url,
+                _mask_token(token),
+                {**body, "card_number": "***", "security_code": "***"},
+            )
+            response = await client.post(
+                self.cards_url,
+                headers={
+                    "Authorization": authorization,
+                    "Content-Type": "application/json",
+                    "Accept": "application/json",
+                },
+                json=body,
+            )
+            if response.status_code >= 400:
+                raise RuntimeError(
+                    "Getnet wallet create_card failed "
+                    f"({response.status_code}): {response.text}"
+                )
+            return response.json()
+
+    async def delete_card(
+        self,
+        card_id: str,
+        access_token: str | None = None,
+    ) -> None:
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            token = access_token or await self._get_access_token(client)
+            response = await client.delete(
+                f"{self.cards_url}/{card_id}",
+                headers={"Authorization": f"Bearer {token}"},
+            )
+            if response.status_code >= 400:
+                raise RuntimeError(
+                    "Getnet wallet delete_card failed "
+                    f"({response.status_code}): {response.text}"
+                )
+
+    async def _get_access_token(self, client: httpx.AsyncClient) -> str:
+        data = await self._request_access_token(client)
+        return str(data["access_token"])
+
+    async def _request_access_token(self, client: httpx.AsyncClient) -> dict[str, Any]:
+        response = await client.post(
+            self.auth_url,
+            headers={
+                "Content-Type": "application/x-www-form-urlencoded",
+                "Accept": "application/json",
+            },
+            data={
+                "grant_type": "client_credentials",
+                "client_id": self.client_id,
+                "client_secret": self.client_secret,
+            },
+        )
+        data = response.json()
+        if response.status_code >= 400:
+            raise RuntimeError(f"Getnet auth failed ({response.status_code}): {data}")
+
+        token = data.get("access_token")
+        if not token:
+            raise RuntimeError(f"Getnet auth response missing access_token: {data}")
+        return data
+
+
 def is_checkout_request(text: str | None) -> bool:
     if not text:
         return False
@@ -916,18 +1055,32 @@ def is_checkout_request(text: str | None) -> bool:
 
 
 def _read_env_file_value(key: str) -> str | None:
-    env_path = Path(__file__).resolve().parent.parent / ".env"
-    if not env_path.exists():
-        return None
+    env_paths = [
+        Path(__file__).resolve().parent.parent / ".env",
+        Path(__file__).resolve().parent.parent.parent / ".env",
+        Path(__file__).resolve().parent.parent.parent / "frontend" / ".env",
+    ]
 
-    for raw_line in env_path.read_text(encoding="utf-8").splitlines():
-        line = raw_line.strip()
-        if not line or line.startswith("#") or "=" not in line:
+    for env_path in env_paths:
+        if not env_path.exists():
             continue
-        parsed_key, parsed_value = line.split("=", 1)
-        if parsed_key.strip() != key:
-            continue
-        value = parsed_value.strip().strip('"').strip("'")
-        return value or None
 
+        for raw_line in env_path.read_text(encoding="utf-8").splitlines():
+            line = raw_line.strip()
+            if not line or line.startswith("#") or "=" not in line:
+                continue
+            parsed_key, parsed_value = line.split("=", 1)
+            if parsed_key.strip() != key:
+                continue
+            value = parsed_value.strip().strip('"').strip("'")
+            return value or None
+
+    return None
+
+
+def _read_first_available_env_value(keys: list[str]) -> str | None:
+    for key in keys:
+        value = os.getenv(key) or _read_env_file_value(key)
+        if value:
+            return value
     return None

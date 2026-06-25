@@ -67,7 +67,7 @@ export type LatestThreadCheckout = {
   payment_intent_id: string;
   redirect_url: string;
   flow: CheckoutFlow;
-  status?: "created" | "completed" | "cancelled" | "pending" | string;
+  status?: "created" | "completed" | "cancelled" | "pending" | (string & {});
   updated_at: string;
 };
 
