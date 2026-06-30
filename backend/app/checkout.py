@@ -9,7 +9,7 @@ from typing import Any
 from uuid import uuid4
 
 import httpx
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 
 logger = logging.getLogger("uvicorn.error")
 
@@ -168,6 +168,23 @@ class WalletCardCreateRequest(BaseModel):
     expiration_month: str
     expiration_year: str
     security_code: str | None = None
+
+    @field_validator("expiration_year")
+    @classmethod
+    def _normalize_expiration_year(cls, value: str) -> str:
+        digits = value.strip()
+        # Getnet vault expects a two-digit year (e.g. "30" for 2030).
+        if len(digits) == 4 and digits.isdigit():
+            return digits[-2:]
+        return digits
+
+    @field_validator("expiration_month")
+    @classmethod
+    def _normalize_expiration_month(cls, value: str) -> str:
+        digits = value.strip()
+        if digits.isdigit():
+            return digits.zfill(2)
+        return digits
 
 
 def normalize_flow(value: str | CheckoutFlow | None) -> CheckoutFlow:
@@ -955,12 +972,17 @@ class GetnetWalletClient:
         async with httpx.AsyncClient(timeout=30.0) as client:
             return await self._request_access_token(client)
 
-    async def list_cards(self, access_token: str | None = None) -> Any:
+    async def list_cards(
+        self,
+        customer_id: str,
+        access_token: str | None = None,
+    ) -> Any:
         async with httpx.AsyncClient(timeout=30.0) as client:
             token = access_token or await self._get_access_token(client)
             response = await client.get(
                 self.cards_url,
                 headers={"Authorization": f"Bearer {token}"},
+                params={"customer_id": customer_id},
             )
             if response.status_code >= 400:
                 raise RuntimeError(

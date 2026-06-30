@@ -101,7 +101,7 @@ export async function registerCard(
       cardholder_name: payload.cardholderName,
       customer_id: payload.customerId,
       expiration_month: String(payload.expiryMonth).padStart(2, "0"),
-      expiration_year: String(payload.expiryYear),
+      expiration_year: String(payload.expiryYear).slice(-2),
       security_code: payload.cvv,
     };
 
@@ -146,13 +146,16 @@ export async function registerCard(
   };
 }
 
-export async function getSavedCards(): Promise<SavedCardSummary[]> {
+export async function getSavedCards(
+  customerId: string,
+): Promise<SavedCardSummary[]> {
   if (!shouldUseRealApi) {
     return [];
   }
 
   const accessToken = await getAccessToken();
-  const response = await fetch(CARDS_API_URL, {
+  const listUrl = `${CARDS_API_URL}?customer_id=${encodeURIComponent(customerId)}`;
+  const response = await fetch(listUrl, {
     method: "GET",
     headers: {
       authorization: `Bearer ${accessToken}`,

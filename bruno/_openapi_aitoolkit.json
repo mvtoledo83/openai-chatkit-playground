@@ -1,0 +1,532 @@
+﻿{
+    "openapi":  "3.1.0",
+    "info":  {
+                 "title":  "MCP AI Toolkit Sandbox â REST API",
+                 "description":  "Plain HTTP endpoints mounted on the FastMCP server alongside the MCP protocol. Use these for clients that prefer REST over MCP.",
+                 "version":  "v1"
+             },
+    "components":  {
+                       "schemas":  {
+                                       "CreateCardRequest":  {
+                                                                 "description":  "Request payload to tokenise and store a card in the Getnet vault.\n\nAll fields are required. The ``card_number`` PAN is used solely for\ntokenisation and is never persisted once the ``number_token`` is obtained.",
+                                                                 "properties":  {
+                                                                                    "card_number":  {
+                                                                                                        "description":  "16-digit primary account number (PAN). Used exclusively for tokenisation; never stored after the token is created.",
+                                                                                                        "title":  "Card Number",
+                                                                                                        "type":  "string"
+                                                                                                    },
+                                                                                    "idempotency_key":  {
+                                                                                                            "anyOf":  [
+                                                                                                                          {
+                                                                                                                              "type":  "string"
+                                                                                                                          },
+                                                                                                                          {
+                                                                                                                              "type":  "null"
+                                                                                                                          }
+                                                                                                                      ],
+                                                                                                            "default":  null,
+                                                                                                            "description":  "Journey idempotency key forwarded to ORC when supplied.",
+                                                                                                            "title":  "Idempotency Key"
+                                                                                                        },
+                                                                                    "transaction_id":  {
+                                                                                                           "anyOf":  [
+                                                                                                                         {
+                                                                                                                             "maxLength":  18,
+                                                                                                                             "type":  "string"
+                                                                                                                         },
+                                                                                                                         {
+                                                                                                                             "type":  "null"
+                                                                                                                         }
+                                                                                                                     ],
+                                                                                                           "default":  null,
+                                                                                                           "description":  "Optional SEP/Getnet vault transaction key forwarded when supplied.",
+                                                                                                           "title":  "Transaction Id"
+                                                                                                       },
+                                                                                    "customer_id":  {
+                                                                                                        "description":  "Unique identifier of the customer who owns the card.",
+                                                                                                        "title":  "Customer Id",
+                                                                                                        "type":  "string"
+                                                                                                    },
+                                                                                    "brand":  {
+                                                                                                  "description":  "Card network brand. Accepted values: \u0027visa\u0027, \u0027mastercard\u0027, \u0027elo\u0027, \u0027amex\u0027, \u0027hipercard\u0027.",
+                                                                                                  "enum":  [
+                                                                                                               "mastercard",
+                                                                                                               "visa",
+                                                                                                               "elo",
+                                                                                                               "amex",
+                                                                                                               "hipercard"
+                                                                                                           ],
+                                                                                                  "title":  "Brand",
+                                                                                                  "type":  "string"
+                                                                                              },
+                                                                                    "cardholder_name":  {
+                                                                                                            "description":  "Full name of the cardholder exactly as it appears on the card.",
+                                                                                                            "title":  "Cardholder Name",
+                                                                                                            "type":  "string"
+                                                                                                        },
+                                                                                    "expiration_month":  {
+                                                                                                             "description":  "Card expiry month as a two-digit string (e.g. \u002701\u0027 for January, \u002712\u0027 for December).",
+                                                                                                             "title":  "Expiration Month",
+                                                                                                             "type":  "string"
+                                                                                                         },
+                                                                                    "expiration_year":  {
+                                                                                                            "description":  "Card expiry year as a two-digit string (e.g. \u002727\u0027 for 2027).",
+                                                                                                            "title":  "Expiration Year",
+                                                                                                            "type":  "string"
+                                                                                                        },
+                                                                                    "security_code":  {
+                                                                                                          "anyOf":  [
+                                                                                                                        {
+                                                                                                                            "type":  "string"
+                                                                                                                        },
+                                                                                                                        {
+                                                                                                                            "type":  "null"
+                                                                                                                        }
+                                                                                                                    ],
+                                                                                                          "default":  null,
+                                                                                                          "description":  "Card Verification Value (CVV/CVC). 3 digits for most brands, 4 digits for Amex.Optional.",
+                                                                                                          "title":  "Security Code"
+                                                                                                      }
+                                                                                },
+                                                                 "required":  [
+                                                                                  "card_number",
+                                                                                  "customer_id",
+                                                                                  "brand",
+                                                                                  "cardholder_name",
+                                                                                  "expiration_month",
+                                                                                  "expiration_year"
+                                                                              ],
+                                                                 "title":  "CreateCardRequest",
+                                                                 "type":  "object"
+                                                             },
+                                       "CreateCardResponse":  {
+                                                                  "description":  "Response returned after a card has been successfully stored in the vault.",
+                                                                  "properties":  {
+                                                                                     "idempotency_key":  {
+                                                                                                             "anyOf":  [
+                                                                                                                           {
+                                                                                                                               "type":  "string"
+                                                                                                                           },
+                                                                                                                           {
+                                                                                                                               "type":  "null"
+                                                                                                                           }
+                                                                                                                       ],
+                                                                                                             "default":  null,
+                                                                                                             "title":  "Idempotency Key"
+                                                                                                         },
+                                                                                     "card_id":  {
+                                                                                                     "description":  "Opaque identifier of the newly stored card. Use this value in payment operations and card management calls (card_payment tool, DELETE /v1/cards/\u003ccard_id\u003e).",
+                                                                                                     "title":  "Card Id",
+                                                                                                     "type":  "string"
+                                                                                                 }
+                                                                                 },
+                                                                  "required":  [
+                                                                                   "card_id"
+                                                                               ],
+                                                                  "title":  "CreateCardResponse",
+                                                                  "type":  "object"
+                                                              },
+                                       "CardResponse":  {
+                                                            "description":  "Compact view of a vaulted card returned by listing operations.\n\nExposes only non-sensitive identifiers and metadata needed by clients\n(REST consumers and the ``list_cards`` MCP tool) to select a card for\nsubsequent payment operations. Raw PANs, number tokens and expiry data\nare intentionally omitted.",
+                                                            "properties":  {
+                                                                               "card_id":  {
+                                                                                               "description":  "Opaque vault identifier of the card. Use it in payment operations.",
+                                                                                               "title":  "Card Id",
+                                                                                               "type":  "string"
+                                                                                           },
+                                                                               "seller_id":  {
+                                                                                                 "description":  "Unique identifier of the seller (merchant) that owns the vault entry, extracted from the caller\u0027s JWT ``sellerId`` claim.",
+                                                                                                 "title":  "Seller Id",
+                                                                                                 "type":  "string"
+                                                                                             },
+                                                                               "customer_id":  {
+                                                                                                   "description":  "Unique identifier of the customer who owns the card.",
+                                                                                                   "title":  "Customer Id",
+                                                                                                   "type":  "string"
+                                                                                               },
+                                                                               "brand":  {
+                                                                                             "description":  "Card network brand. Typical values: \u0027visa\u0027, \u0027mastercard\u0027, \u0027elo\u0027, \u0027amex\u0027, \u0027hipercard\u0027.",
+                                                                                             "title":  "Brand",
+                                                                                             "type":  "string"
+                                                                                         },
+                                                                               "last4":  {
+                                                                                             "description":  "Last four digits of the card PAN, suitable for display.",
+                                                                                             "title":  "Last4",
+                                                                                             "type":  "string"
+                                                                                         },
+                                                                               "bin":  {
+                                                                                           "description":  "Bank Identification Number (BIN) â the first six digits of the PAN.",
+                                                                                           "title":  "Bin",
+                                                                                           "type":  "string"
+                                                                                       }
+                                                                           },
+                                                            "required":  [
+                                                                             "card_id",
+                                                                             "seller_id",
+                                                                             "customer_id",
+                                                                             "brand",
+                                                                             "last4",
+                                                                             "bin"
+                                                                         ],
+                                                            "title":  "CardResponse",
+                                                            "type":  "object"
+                                                        },
+                                       "ErrorResponse":  {
+                                                             "type":  "object",
+                                                             "properties":  {
+                                                                                "error":  {
+                                                                                              "type":  "string",
+                                                                                              "description":  "Human-readable error description."
+                                                                                          }
+                                                                            },
+                                                             "required":  [
+                                                                              "error"
+                                                                          ]
+                                                         },
+                                       "ValidationErrorResponse":  {
+                                                                       "type":  "object",
+                                                                       "properties":  {
+                                                                                          "errors":  {
+                                                                                                         "type":  "array",
+                                                                                                         "description":  "Pydantic-style structured validation errors.",
+                                                                                                         "items":  {
+                                                                                                                       "type":  "object"
+                                                                                                                   }
+                                                                                                     }
+                                                                                      },
+                                                                       "required":  [
+                                                                                        "errors"
+                                                                                    ]
+                                                                   },
+                                       "LivenessResponse":  {
+                                                                "type":  "object",
+                                                                "properties":  {
+                                                                                   "msg":  {
+                                                                                               "type":  "string"
+                                                                                           }
+                                                                               },
+                                                                "required":  [
+                                                                                 "msg"
+                                                                             ]
+                                                            },
+                                       "HealthResponse":  {
+                                                              "type":  "object",
+                                                              "properties":  {
+                                                                                 "status":  {
+                                                                                                "type":  "string",
+                                                                                                "example":  "healthy"
+                                                                                            }
+                                                                             },
+                                                              "required":  [
+                                                                               "status"
+                                                                           ]
+                                                          },
+                                       "WebhookAck":  {
+                                                          "type":  "object",
+                                                          "properties":  {
+                                                                             "status":  {
+                                                                                            "type":  "string",
+                                                                                            "example":  "OK"
+                                                                                        }
+                                                                         },
+                                                          "required":  [
+                                                                           "status"
+                                                                       ]
+                                                      }
+                                   },
+                       "securitySchemes":  {
+                                               "BearerAuth":  {
+                                                                  "type":  "http",
+                                                                  "scheme":  "bearer",
+                                                                  "description":  "Authorization header forwarded to the Getnet gateway. Accepts Bearer or Basic credentials."
+                                                              }
+                                           }
+                   },
+    "tags":  [
+                 {
+                     "name":  "cards",
+                     "description":  "Card vault management."
+                 },
+                 {
+                     "name":  "mastercard",
+                     "description":  "Mastercard integration callbacks."
+                 },
+                 {
+                     "name":  "system",
+                     "description":  "Liveness and health probes."
+                 }
+             ],
+    "paths":  {
+                  "/":  {
+                            "get":  {
+                                        "tags":  [
+                                                     "system"
+                                                 ],
+                                        "summary":  "Liveness probe",
+                                        "description":  "Returns a static payload identifying the service.",
+                                        "responses":  {
+                                                          "200":  {
+                                                                      "description":  "Service is reachable.",
+                                                                      "content":  {
+                                                                                      "application/json":  {
+                                                                                                               "schema":  {
+                                                                                                                              "$ref":  "#/components/schemas/LivenessResponse"
+                                                                                                                          }
+                                                                                                           }
+                                                                                  }
+                                                                  }
+                                                      }
+                                    }
+                        },
+                  "/health":  {
+                                  "get":  {
+                                              "tags":  [
+                                                           "system"
+                                                       ],
+                                              "summary":  "Health check",
+                                              "description":  "Used by Docker HEALTHCHECK and load balancers.",
+                                              "responses":  {
+                                                                "200":  {
+                                                                            "description":  "Service is healthy.",
+                                                                            "content":  {
+                                                                                            "application/json":  {
+                                                                                                                     "schema":  {
+                                                                                                                                    "$ref":  "#/components/schemas/HealthResponse"
+                                                                                                                                }
+                                                                                                                 }
+                                                                                        }
+                                                                        }
+                                                            }
+                                          }
+                              },
+                  "/v1/cards":  {
+                                    "post":  {
+                                                 "tags":  [
+                                                              "cards"
+                                                          ],
+                                                 "summary":  "Tokenise and store a card in the Getnet vault",
+                                                 "security":  [
+                                                                  {
+                                                                      "BearerAuth":  [
+
+                                                                                     ]
+                                                                  }
+                                                              ],
+                                                 "requestBody":  {
+                                                                     "required":  true,
+                                                                     "content":  {
+                                                                                     "application/json":  {
+                                                                                                              "schema":  {
+                                                                                                                             "$ref":  "#/components/schemas/CreateCardRequest"
+                                                                                                                         }
+                                                                                                          }
+                                                                                 }
+                                                                 },
+                                                 "responses":  {
+                                                                   "201":  {
+                                                                               "description":  "Card stored successfully.",
+                                                                               "content":  {
+                                                                                               "application/json":  {
+                                                                                                                        "schema":  {
+                                                                                                                                       "$ref":  "#/components/schemas/CreateCardResponse"
+                                                                                                                                   }
+                                                                                                                    }
+                                                                                           }
+                                                                           },
+                                                                   "400":  {
+                                                                               "description":  "Pydantic validation failure.",
+                                                                               "content":  {
+                                                                                               "application/json":  {
+                                                                                                                        "schema":  {
+                                                                                                                                       "$ref":  "#/components/schemas/ValidationErrorResponse"
+                                                                                                                                   }
+                                                                                                                    }
+                                                                                           }
+                                                                           },
+                                                                   "401":  {
+                                                                               "description":  "Missing or empty Authorization header.",
+                                                                               "content":  {
+                                                                                               "application/json":  {
+                                                                                                                        "schema":  {
+                                                                                                                                       "$ref":  "#/components/schemas/ErrorResponse"
+                                                                                                                                   }
+                                                                                                                    }
+                                                                                           }
+                                                                           },
+                                                                   "500":  {
+                                                                               "description":  "Internal server error.",
+                                                                               "content":  {
+                                                                                               "application/json":  {
+                                                                                                                        "schema":  {
+                                                                                                                                       "$ref":  "#/components/schemas/ErrorResponse"
+                                                                                                                                   }
+                                                                                                                    }
+                                                                                           }
+                                                                           }
+                                                               }
+                                             },
+                                    "get":  {
+                                                "tags":  [
+                                                             "cards"
+                                                         ],
+                                                "summary":  "List vaulted cards for a customer",
+                                                "security":  [
+                                                                 {
+                                                                     "BearerAuth":  [
+
+                                                                                    ]
+                                                                 }
+                                                             ],
+                                                "parameters":  [
+                                                                   {
+                                                                       "name":  "customer_id",
+                                                                       "in":  "query",
+                                                                       "required":  true,
+                                                                       "schema":  {
+                                                                                      "type":  "string"
+                                                                                  },
+                                                                       "description":  "Unique identifier of the customer."
+                                                                   }
+                                                               ],
+                                                "responses":  {
+                                                                  "200":  {
+                                                                              "description":  "List of cards for the customer.",
+                                                                              "content":  {
+                                                                                              "application/json":  {
+                                                                                                                       "schema":  {
+                                                                                                                                      "type":  "array",
+                                                                                                                                      "items":  {
+                                                                                                                                                    "$ref":  "#/components/schemas/CardResponse"
+                                                                                                                                                }
+                                                                                                                                  }
+                                                                                                                   }
+                                                                                          }
+                                                                          },
+                                                                  "400":  {
+                                                                              "description":  "Missing or invalid query parameter.",
+                                                                              "content":  {
+                                                                                              "application/json":  {
+                                                                                                                       "schema":  {
+                                                                                                                                      "$ref":  "#/components/schemas/ErrorResponse"
+                                                                                                                                  }
+                                                                                                                   }
+                                                                                          }
+                                                                          },
+                                                                  "401":  {
+                                                                              "description":  "Missing or empty Authorization header.",
+                                                                              "content":  {
+                                                                                              "application/json":  {
+                                                                                                                       "schema":  {
+                                                                                                                                      "$ref":  "#/components/schemas/ErrorResponse"
+                                                                                                                                  }
+                                                                                                                   }
+                                                                                          }
+                                                                          },
+                                                                  "500":  {
+                                                                              "description":  "Internal server error.",
+                                                                              "content":  {
+                                                                                              "application/json":  {
+                                                                                                                       "schema":  {
+                                                                                                                                      "$ref":  "#/components/schemas/ErrorResponse"
+                                                                                                                                  }
+                                                                                                                   }
+                                                                                          }
+                                                                          }
+                                                              }
+                                            }
+                                },
+                  "/v1/cards/{card_id}":  {
+                                              "delete":  {
+                                                             "tags":  [
+                                                                          "cards"
+                                                                      ],
+                                                             "summary":  "Remove a card from the vault",
+                                                             "security":  [
+                                                                              {
+                                                                                  "BearerAuth":  [
+
+                                                                                                 ]
+                                                                              }
+                                                                          ],
+                                                             "parameters":  [
+                                                                                {
+                                                                                    "name":  "card_id",
+                                                                                    "in":  "path",
+                                                                                    "required":  true,
+                                                                                    "schema":  {
+                                                                                                   "type":  "string"
+                                                                                               },
+                                                                                    "description":  "Identifier of the card to delete."
+                                                                                }
+                                                                            ],
+                                                             "responses":  {
+                                                                               "204":  {
+                                                                                           "description":  "Card removed."
+                                                                                       },
+                                                                               "400":  {
+                                                                                           "description":  "Missing path parameter.",
+                                                                                           "content":  {
+                                                                                                           "application/json":  {
+                                                                                                                                    "schema":  {
+                                                                                                                                                   "$ref":  "#/components/schemas/ErrorResponse"
+                                                                                                                                               }
+                                                                                                                                }
+                                                                                                       }
+                                                                                       },
+                                                                               "401":  {
+                                                                                           "description":  "Missing or empty Authorization header.",
+                                                                                           "content":  {
+                                                                                                           "application/json":  {
+                                                                                                                                    "schema":  {
+                                                                                                                                                   "$ref":  "#/components/schemas/ErrorResponse"
+                                                                                                                                               }
+                                                                                                                                }
+                                                                                                       }
+                                                                                       },
+                                                                               "500":  {
+                                                                                           "description":  "Internal server error.",
+                                                                                           "content":  {
+                                                                                                           "application/json":  {
+                                                                                                                                    "schema":  {
+                                                                                                                                                   "$ref":  "#/components/schemas/ErrorResponse"
+                                                                                                                                               }
+                                                                                                                                }
+                                                                                                       }
+                                                                                       }
+                                                                           }
+                                                         }
+                                          },
+                  "/v1/mastercard/webhook":  {
+                                                 "post":  {
+                                                              "tags":  [
+                                                                           "mastercard"
+                                                                       ],
+                                                              "summary":  "Receive a Mastercard webhook callback",
+                                                              "description":  "Accepts any JSON or raw payload from Mastercard, logs it for observability, and always returns 200 OK.",
+                                                              "requestBody":  {
+                                                                                  "required":  false,
+                                                                                  "content":  {
+                                                                                                  "application/json":  {
+                                                                                                                           "schema":  {
+                                                                                                                                          "type":  "object",
+                                                                                                                                          "additionalProperties":  true
+                                                                                                                                      }
+                                                                                                                       }
+                                                                                              }
+                                                                              },
+                                                              "responses":  {
+                                                                                "200":  {
+                                                                                            "description":  "Webhook acknowledged.",
+                                                                                            "content":  {
+                                                                                                            "application/json":  {
+                                                                                                                                     "schema":  {
+                                                                                                                                                    "$ref":  "#/components/schemas/WebhookAck"
+                                                                                                                                                }
+                                                                                                                                 }
+                                                                                                        }
+                                                                                        }
+                                                                            }
+                                                          }
+                                             }
+              }
+}

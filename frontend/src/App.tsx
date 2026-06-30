@@ -9,7 +9,7 @@ import {
   type CardRegistrationResult,
   type SavedCardSummary,
 } from "./lib/cards";
-import { CARDS_REAL_MODE } from "./lib/config";
+import { CARDS_CUSTOMER_ID, CARDS_REAL_MODE } from "./lib/config";
 
 type AppSection = "chat" | "cards";
 
@@ -54,7 +54,7 @@ export default function App() {
     try {
       setCardsLoading(true);
       setCardsError(null);
-      const cards = await getSavedCards();
+      const cards = await getSavedCards(CARDS_CUSTOMER_ID);
       setSavedCards(cards);
     } catch (error) {
       setCardsError(

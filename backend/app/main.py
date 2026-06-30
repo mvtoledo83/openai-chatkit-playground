@@ -66,12 +66,13 @@ async def create_checkout_intent(request: CheckoutIntentRequest) -> JSONResponse
 
 @app.get("/wallet/cards")
 async def list_wallet_cards(
+    customer_id: str,
     authorization: str | None = Header(default=None),
 ) -> JSONResponse:
     try:
         client = GetnetWalletClient.from_env()
         access_token = _extract_bearer_token(authorization)
-        result = await client.list_cards(access_token=access_token)
+        result = await client.list_cards(customer_id, access_token=access_token)
     except RuntimeError as exc:
         raise HTTPException(status_code=500, detail=str(exc)) from exc
     except Exception as exc:  # pragma: no cover - surfaced to the UI for debugging
