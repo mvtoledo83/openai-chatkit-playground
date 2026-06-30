@@ -1,0 +1,6 @@
+# Ignora environments do Bruno (contêm credenciais/segredos do sandbox pre)
+environments/
+
+# Saídas de execução do Bruno
+*.bru.log
+.bruno-output/

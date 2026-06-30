@@ -113,14 +113,6 @@ export function CardRegistrationModal({
   }
 
   const validateForm = (): string | null => {
-    if (form.label.trim().length < 2) {
-      return "Informe um nome para identificar o cartao.";
-    }
-
-    if (form.cardholderName.trim().length < 3) {
-      return "Informe o nome completo do titular.";
-    }
-
     if (form.customerId.trim().length < 1 || form.customerId.trim().length > 50) {
       return "Informe um ID de cliente (1 a 50 caracteres).";
     }
@@ -239,7 +231,7 @@ export function CardRegistrationModal({
 
         <div className="space-y-4 px-6 py-5">
           <Field
-            label="Nome do cartao"
+            label="Nome do cartao (opcional)"
             placeholder="Ex.: Cartao principal"
             value={form.label}
             onChange={(value) => setForm((current) => ({ ...current, label: value }))}
@@ -247,7 +239,7 @@ export function CardRegistrationModal({
           />
 
           <Field
-            label="Nome do titular"
+            label="Nome do titular (opcional)"
             placeholder="Ex.: Joao Silva"
             value={form.cardholderName}
             onChange={(value) =>

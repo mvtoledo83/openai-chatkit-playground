@@ -1,0 +1,46 @@
+meta {
+  name: 02 - MCP list_cards
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{mcpUrl}}
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+headers {
+  Content-Type: application/json
+  Accept: application/json, text/event-stream
+}
+
+body:json {
+  {
+    "jsonrpc": "2.0",
+    "id": "2",
+    "method": "tools/call",
+    "params": {
+      "name": "list_cards",
+      "arguments": {
+        "customer_id": "{{customerId}}",
+        "status": "all"
+      }
+    }
+  }
+}
+
+tests {
+  test("status 200", function () {
+    expect(res.getStatus()).to.equal(200);
+  });
+
+  test("resposta jsonrpc", function () {
+    const body = res.getBody();
+    expect(body).to.be.ok;
+  });
+}

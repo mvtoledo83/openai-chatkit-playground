@@ -1,0 +1,41 @@
+meta {
+  name: 01 - OAuth2 Access Token
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{authUrl}}
+  body: formUrlEncoded
+  auth: none
+}
+
+headers {
+  Content-Type: application/x-www-form-urlencoded
+  Accept: application/json
+}
+
+body:form-urlencoded {
+  grant_type: client_credentials
+  client_id: {{clientId}}
+  client_secret: {{clientSecret}}
+}
+
+script:post-response {
+  if (res.getStatus() === 200 && res.getBody() && res.getBody().access_token) {
+    bru.setVar("accessToken", res.getBody().access_token);
+    console.log("accessToken salvo (runtime).");
+  } else {
+    console.log("Falha ao obter access_token. Status:", res.getStatus());
+  }
+}
+
+tests {
+  test("status 200", function () {
+    expect(res.getStatus()).to.equal(200);
+  });
+
+  test("retorna access_token", function () {
+    expect(res.getBody()).to.have.property("access_token");
+  });
+}

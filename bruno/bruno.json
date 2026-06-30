@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "Getnet AI Toolkit",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}
