@@ -11,7 +11,6 @@ type CardRegistrationModalProps = {
 };
 
 type FormState = {
-  label: string;
   cardholderName: string;
   customerId: string;
   cardNumber: string;
@@ -77,7 +76,6 @@ const CARD_BRANDS: CardBrand[] = [
 ];
 
 const INITIAL_FORM: FormState = {
-  label: "",
   cardholderName: "",
   customerId: "",
   cardNumber: "",
@@ -113,6 +111,10 @@ export function CardRegistrationModal({
   }
 
   const validateForm = (): string | null => {
+    if (form.cardholderName.trim().length < 1) {
+      return "Informe o nome do titular do cartao.";
+    }
+
     if (form.customerId.trim().length < 1 || form.customerId.trim().length > 50) {
       return "Informe um ID de cliente (1 a 50 caracteres).";
     }
@@ -136,7 +138,7 @@ export function CardRegistrationModal({
       return "Validade invalida. Use o formato MM/YY.";
     }
 
-    if (!/^\d{3,4}$/.test(form.cvv)) {
+    if (form.cvv.length > 0 && !/^\d{3,4}$/.test(form.cvv)) {
       return "CVV invalido. Use 3 ou 4 digitos.";
     }
 
@@ -180,7 +182,7 @@ export function CardRegistrationModal({
     try {
       setLoading(true);
       const result = await registerCard({
-        label: form.label.trim(),
+        label: `${detectedBrand?.label ?? "Cartao"} final ${normalizedNumber.slice(-4)}`,
         cardNumber: normalizedNumber,
         brand,
         cardholderName: form.cardholderName.trim(),
@@ -231,15 +233,7 @@ export function CardRegistrationModal({
 
         <div className="space-y-4 px-6 py-5">
           <Field
-            label="Nome do cartao (opcional)"
-            placeholder="Ex.: Cartao principal"
-            value={form.label}
-            onChange={(value) => setForm((current) => ({ ...current, label: value }))}
-            maxLength={30}
-          />
-
-          <Field
-            label="Nome do titular (opcional)"
+            label="Nome do titular"
             placeholder="Ex.: Joao Silva"
             value={form.cardholderName}
             onChange={(value) =>
@@ -291,7 +285,7 @@ export function CardRegistrationModal({
             />
 
             <Field
-              label="CVV"
+              label="CVV (opcional)"
               placeholder="123"
               value={form.cvv}
               onChange={(value) =>
