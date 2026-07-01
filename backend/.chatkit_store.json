@@ -119,6 +119,20 @@
         "data": [],
         "has_more": false
       }
+    },
+    "thr_f8f4706c": {
+      "id": "thr_f8f4706c",
+      "created_at": "2026-07-01T16:45:28.401721",
+      "status": {
+        "type": "active"
+      },
+      "metadata": {
+        "active_journey": 1
+      },
+      "items": {
+        "data": [],
+        "has_more": false
+      }
     }
   },
   "items": {
@@ -1785,6 +1799,164 @@
           }
         },
         "copy_text": "Preencha os dados do cartao para o pagamento demonstrativo."
+      },
+      {
+        "id": "msg_51e2ccf4",
+        "thread_id": "thr_0f984548",
+        "created_at": "2026-07-01T16:45:12.630557",
+        "type": "widget",
+        "widget": {
+          "id": "payment-result-2c8810be",
+          "type": "Card",
+          "children": [
+            {
+              "type": "Title",
+              "value": "Pagamento aprovado",
+              "size": "lg"
+            },
+            {
+              "type": "Text",
+              "value": "Pagamento de R$ 0,01 concluido (demonstracao) com o cartao Mastercard final 1800.",
+              "color": "success",
+              "size": "sm"
+            },
+            {
+              "type": "Button",
+              "label": "Novo pagamento",
+              "onClickAction": {
+                "type": "journey3.cardform.start",
+                "payload": {},
+                "handler": "server",
+                "loadingBehavior": "auto",
+                "streaming": true
+              },
+              "color": "info",
+              "variant": "outline",
+              "pill": true,
+              "block": true
+            }
+          ],
+          "background": {
+            "dark": "surface-elevated",
+            "light": "surface-elevated"
+          },
+          "size": "full",
+          "padding": 16.0,
+          "status": {
+            "text": "Pagamento concluido",
+            "icon": "sparkle"
+          }
+        },
+        "copy_text": "Pagamento demonstrativo concluido."
+      }
+    ],
+    "thr_f8f4706c": [
+      {
+        "id": "msg_9102094c",
+        "thread_id": "thr_f8f4706c",
+        "created_at": "2026-07-01T16:45:28.410361",
+        "type": "user_message",
+        "content": [
+          {
+            "type": "input_text",
+            "text": "quero pagar"
+          }
+        ],
+        "attachments": [],
+        "quoted_text": "",
+        "inference_options": {}
+      },
+      {
+        "id": "msg_1011974c",
+        "thread_id": "thr_f8f4706c",
+        "created_at": "2026-07-01T16:45:28.462173",
+        "type": "widget",
+        "widget": {
+          "id": "journey1-intro-311ee278",
+          "type": "Card",
+          "children": [
+            {
+              "type": "Title",
+              "value": "Pagamento via webcheckout Getnet",
+              "size": "lg"
+            },
+            {
+              "type": "Text",
+              "value": "Clique em Pagar para gerar a intencao de pagamento e receber o link do webcheckout hospedado da Getnet.",
+              "color": "secondary",
+              "size": "sm"
+            },
+            {
+              "type": "Button",
+              "label": "Pagar",
+              "onClickAction": {
+                "type": "journey1.pay",
+                "payload": {},
+                "handler": "server",
+                "loadingBehavior": "auto",
+                "streaming": true
+              },
+              "color": "info",
+              "variant": "solid",
+              "pill": true,
+              "block": true
+            }
+          ],
+          "background": {
+            "dark": "surface-elevated",
+            "light": "surface-elevated"
+          },
+          "size": "full",
+          "padding": 16.0,
+          "status": {
+            "text": "Jornada 1: webcheckout Getnet",
+            "icon": "sparkle"
+          }
+        },
+        "copy_text": "Clique em Pagar para gerar o link do webcheckout."
+      },
+      {
+        "id": "msg_52decc1d",
+        "thread_id": "thr_f8f4706c",
+        "created_at": "2026-07-01T16:45:32.641838",
+        "type": "widget",
+        "widget": {
+          "id": "checkout-result-36a9e48f-7aa3-4972-a27f-e2b536702b79BR",
+          "type": "Card",
+          "children": [
+            {
+              "type": "Title",
+              "value": "Checkout iniciado",
+              "size": "lg"
+            },
+            {
+              "type": "Text",
+              "value": "Flow: payment",
+              "color": "secondary",
+              "size": "sm"
+            },
+            {
+              "type": "Text",
+              "value": "Payment intent: 36a9e48f-7aa3-4972-a27f-e2b536702b79BR",
+              "size": "sm"
+            },
+            {
+              "type": "Markdown",
+              "value": "[Abrir checkout agora](https://www.pre.globalgetnet.com/hosted-web-checkout/eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IlBBR09OWFQtQ1AtUlNBUFJJVi1ERUMtMDAxIn0.eyJwYXltZW50X2ludGVudF9pZCI6IjM2YTllNDhmLTdhYTMtNDk3Mi1hMjdmLWUyYjUzNjcwMmI3OUJSIiwidHJhZGVfbmFtZSI6IkVDIFRFU1RFUyBQQUdPTlhUIE5BTyBVU0FSVEVTVEVQQVJBTUVURVJTIiwiY291bnRyeSI6IkJSIiwiand0Ijoie1wicGF5bWVudF9pbnRlbnRfaWRcIjpcIjM2YTllNDhmLTdhYTMtNDk3Mi1hMjdmLWUyYjUzNjcwMmI3OUJSXCIsXCJ0cmFkZV9uYW1lXCI6XCJFQyBURVNURVMgUEFHT05YVCBOQU8gVVNBUlRFU1RFUEFSQU1FVEVSU1wiLFwiaGlkZV9nZXRuZXRfbG9nb1wiOmZhbHNlfSIsImlhdCI6MTc4MjkzNTEzMiwianRpIjoiMzZhOWU0OGYtN2FhMy00OTcyLWEyN2YtZTJiNTM2NzAyYjc5QlIifQ.lWv_pRTUqhVVP_SOc7ml2UigSMIB82NxrFIBL2p0kvSLstYgUnNEVIJD7362PN4OWRj42haPr-V_u7klTghEBitdFo9_Hv1xdcXU67bfh6Y5NBP7PfDskwaGDNM65Ii8b_Uwd00XPq6Z4zRirZYqzVBSDAVW3KMtIhmKuHoFfRLYWbLLQE7VsbEB2OAxXgcQPuHCUc6DsABi09M8GFMTSVgRCiaOSHvaA01cUgq0lJDfPqF9FfCYCV4pcghgUvjv6JQvggKpzpHJFdDigcIayqSV8QsbqPJxYRUH04kVnoM_JaKD8WTxnrCGLbPizxvnBT3Q810PY0fROVHXM0koKA)\n\nSe o link nao abrir automaticamente no ambiente atual, clique na URL que uma nova aba se abrir\u00e1."
+            }
+          ],
+          "background": {
+            "dark": "surface-elevated",
+            "light": "surface-elevated"
+          },
+          "size": "full",
+          "padding": 16.0,
+          "status": {
+            "text": "Checkout criado",
+            "icon": "check-circle"
+          }
+        },
+        "copy_text": "Link do webcheckout gerado: https://www.pre.globalgetnet.com/hosted-web-checkout/eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IlBBR09OWFQtQ1AtUlNBUFJJVi1ERUMtMDAxIn0.eyJwYXltZW50X2ludGVudF9pZCI6IjM2YTllNDhmLTdhYTMtNDk3Mi1hMjdmLWUyYjUzNjcwMmI3OUJSIiwidHJhZGVfbmFtZSI6IkVDIFRFU1RFUyBQQUdPTlhUIE5BTyBVU0FSVEVTVEVQQVJBTUVURVJTIiwiY291bnRyeSI6IkJSIiwiand0Ijoie1wicGF5bWVudF9pbnRlbnRfaWRcIjpcIjM2YTllNDhmLTdhYTMtNDk3Mi1hMjdmLWUyYjUzNjcwMmI3OUJSXCIsXCJ0cmFkZV9uYW1lXCI6XCJFQyBURVNURVMgUEFHT05YVCBOQU8gVVNBUlRFU1RFUEFSQU1FVEVSU1wiLFwiaGlkZV9nZXRuZXRfbG9nb1wiOmZhbHNlfSIsImlhdCI6MTc4MjkzNTEzMiwianRpIjoiMzZhOWU0OGYtN2FhMy00OTcyLWEyN2YtZTJiNTM2NzAyYjc5QlIifQ.lWv_pRTUqhVVP_SOc7ml2UigSMIB82NxrFIBL2p0kvSLstYgUnNEVIJD7362PN4OWRj42haPr-V_u7klTghEBitdFo9_Hv1xdcXU67bfh6Y5NBP7PfDskwaGDNM65Ii8b_Uwd00XPq6Z4zRirZYqzVBSDAVW3KMtIhmKuHoFfRLYWbLLQE7VsbEB2OAxXgcQPuHCUc6DsABi09M8GFMTSVgRCiaOSHvaA01cUgq0lJDfPqF9FfCYCV4pcghgUvjv6JQvggKpzpHJFdDigcIayqSV8QsbqPJxYRUH04kVnoM_JaKD8WTxnrCGLbPizxvnBT3Q810PY0fROVHXM0koKA"
       }
     ]
   }

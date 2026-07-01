@@ -3,6 +3,8 @@ import { ChatKitPanel, type JourneyId } from "./components/ChatKitPanel";
 import { AppHeader } from "./components/layout/AppHeader";
 import { AppSidebar, type AppSection } from "./components/layout/AppSidebar";
 import { CardRegistrationModal } from "./components/modals/CardRegistrationModal";
+import { CheckoutDrawer } from "./components/CheckoutDrawer";
+import { createCardRegistrationIntent } from "./lib/checkout";
 import {
   getSavedCards,
   deleteCard,
@@ -12,6 +14,20 @@ import {
 import { CARDS_CUSTOMER_ID, CARDS_REAL_MODE } from "./lib/config";
 
 const CARDS_CUSTOMER_ID_STORAGE_KEY = "wallet.customerId";
+
+type IframeRegistrationState = {
+  open: boolean;
+  loading: boolean;
+  redirectUrl?: string;
+  status: string;
+  error?: string | null;
+};
+
+const INITIAL_IFRAME_REGISTRATION: IframeRegistrationState = {
+  open: false,
+  loading: false,
+  status: "Pronto para iniciar",
+};
 
 const JOURNEY_SECTIONS: Record<
   Exclude<AppSection, "cards">,
@@ -41,9 +57,59 @@ export default function App() {
   const [deletingCardId, setDeletingCardId] = useState<string | null>(null);
   const [listCustomerId, setListCustomerId] = useState(readStoredCustomerId);
 
+  const [iframeRegistration, setIframeRegistration] =
+    useState<IframeRegistrationState>(INITIAL_IFRAME_REGISTRATION);
+
   const openCardModal = () => {
     setCardSavedNotice(null);
     setCardModalOpen(true);
+  };
+
+  const openIframeRegistration = async () => {
+    setIframeRegistration({
+      open: true,
+      loading: true,
+      status: "Gerando iframe de cadastro na GetNet...",
+      error: null,
+    });
+
+    try {
+      const intent = await createCardRegistrationIntent();
+      setIframeRegistration({
+        open: true,
+        loading: false,
+        redirectUrl: intent.redirect_url,
+        status: `Cadastro de cartao iniciado: ${intent.payment_intent_id}`,
+        error: null,
+      });
+    } catch (error) {
+      setIframeRegistration({
+        open: true,
+        loading: false,
+        status: "Falha ao iniciar o cadastro via iframe.",
+        error:
+          error instanceof Error
+            ? error.message
+            : "Nao foi possivel iniciar o cadastro via iframe.",
+      });
+    }
+  };
+
+  const closeIframeRegistration = () => {
+    setIframeRegistration(INITIAL_IFRAME_REGISTRATION);
+  };
+
+  const handleIframeRegistrationFeedback = (
+    status: "completed" | "cancelled" | "pending",
+  ) => {
+    if (status === "completed") {
+      setCardSavedNotice("Cadastro de cartao via iframe concluido.");
+      setActiveSection("cards");
+      if (CARDS_REAL_MODE) {
+        void loadCards();
+      }
+    }
+    closeIframeRegistration();
   };
 
   const handleDeleteCard = async (cardId: string) => {
@@ -133,6 +199,9 @@ export default function App() {
     <main className="sanitas-shell flex min-h-screen flex-col">
       <AppHeader
         onOpenCardModal={openCardModal}
+        onOpenIframeRegistration={() => {
+          void openIframeRegistration();
+        }}
         onOpenSidebar={() => setMobileSidebarOpen(true)}
       />
 
@@ -258,6 +327,21 @@ export default function App() {
         open={cardModalOpen}
         onClose={() => setCardModalOpen(false)}
         onSaved={handleCardSaved}
+      />
+
+      <CheckoutDrawer
+        open={iframeRegistration.open}
+        title="Cadastro de cartao (iframe GetNet)"
+        subtitle="Os dados do cartao sao capturados na pagina hospedada da GetNet."
+        redirectUrl={iframeRegistration.redirectUrl}
+        status={
+          iframeRegistration.loading
+            ? "Gerando iframe de cadastro na GetNet..."
+            : iframeRegistration.status
+        }
+        error={iframeRegistration.error}
+        onClose={closeIframeRegistration}
+        onFeedback={handleIframeRegistrationFeedback}
       />
     </main>
   );

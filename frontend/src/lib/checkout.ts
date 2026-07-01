@@ -91,6 +91,24 @@ export async function createCheckoutIntent(
   return (await response.json()) as CheckoutIntentResponse;
 }
 
+export async function createCardRegistrationIntent(): Promise<CheckoutIntentResponse> {
+  const response = await fetch("/checkout/card-registration", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(
+      errorText || `Card registration intent failed with ${response.status}`,
+    );
+  }
+
+  return (await response.json()) as CheckoutIntentResponse;
+}
+
 export async function getLatestThreadCheckout(
   threadId: string,
 ): Promise<LatestThreadCheckout | null> {

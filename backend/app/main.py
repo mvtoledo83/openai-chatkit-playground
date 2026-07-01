@@ -9,10 +9,12 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, Response, StreamingResponse
 
 from .checkout import (
+    CheckoutFlow,
     CheckoutIntentRequest,
     GetnetClient,
     GetnetWalletClient,
     WalletCardCreateRequest,
+    build_demo_request,
 )
 from .server import StarterChatServer
 
@@ -55,6 +57,25 @@ async def get_wallet_access_token() -> JSONResponse:
 async def create_checkout_intent(request: CheckoutIntentRequest) -> JSONResponse:
     try:
         client = GetnetClient.from_env()
+        result = await client.create_payment_intent(request)
+    except RuntimeError as exc:
+        raise HTTPException(status_code=500, detail=str(exc)) from exc
+    except Exception as exc:  # pragma: no cover - surfaced to the UI for debugging
+        raise HTTPException(status_code=502, detail=str(exc)) from exc
+
+    return JSONResponse(result.model_dump())
+
+
+@app.post("/checkout/card-registration")
+async def create_card_registration_intent() -> JSONResponse:
+    """Create a Getnet card-verification intent to register a card via iframe.
+
+    Uses the hosted card-verification flow (checkout_type=IFRAME) so the card
+    data is captured on Getnet's page instead of our frontend.
+    """
+    try:
+        client = GetnetClient.from_env()
+        request = build_demo_request(CheckoutFlow.CARD_VERIFICATION)
         result = await client.create_payment_intent(request)
     except RuntimeError as exc:
         raise HTTPException(status_code=500, detail=str(exc)) from exc
