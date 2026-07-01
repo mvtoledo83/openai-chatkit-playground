@@ -38,6 +38,18 @@ GETNET_WALLET_CARDS_URL = os.getenv(
     "GETNET_WALLET_CARDS_URL",
     f"{GETNET_WALLET_API_BASE_URL}/cards",
 )
+GETNET_SEP_API_BASE_URL = os.getenv(
+    "GETNET_SEP_API_BASE_URL",
+    "https://api.pre.globalgetnet.com/dpm/cofre-gw-proxy/v1",
+)
+GETNET_SEP_TOKENIZE_URL = os.getenv(
+    "GETNET_SEP_TOKENIZE_URL",
+    f"{GETNET_SEP_API_BASE_URL}/tokens/card",
+)
+GETNET_SEP_CARDS_URL = os.getenv(
+    "GETNET_SEP_CARDS_URL",
+    f"{GETNET_SEP_API_BASE_URL}/cards",
+)
 
 
 class CheckoutFlow(str, Enum):
@@ -160,6 +172,17 @@ class CheckoutIntentResponse(BaseModel):
     flow: CheckoutFlow
 
 
+_SEP_BRAND_ALIASES = {
+    "visa": "Visa",
+    "mastercard": "Mastercard",
+    "amex": "Amex",
+    "american express": "Amex",
+    "elo": "Elo",
+    "hipercard": "Hipercard",
+    "discover": "Discover",
+}
+
+
 class WalletCardCreateRequest(BaseModel):
     card_number: str
     customer_id: str
@@ -167,7 +190,15 @@ class WalletCardCreateRequest(BaseModel):
     cardholder_name: str
     expiration_month: str
     expiration_year: str
+    cardholder_identification: str = "12345678912"
+    verify_card: bool = False
     security_code: str | None = None
+
+    @field_validator("brand")
+    @classmethod
+    def _normalize_brand(cls, value: str) -> str:
+        normalized = value.strip()
+        return _SEP_BRAND_ALIASES.get(normalized.casefold(), normalized)
 
     @field_validator("expiration_year")
     @classmethod
@@ -949,12 +980,43 @@ class GetnetClient:
         return token
 
 
+_SENSITIVE_CARD_FIELDS = ("number_token", "security_code", "card_number")
+
+
+def _sanitize_wallet_cards(payload: Any) -> Any:
+    """Remove sensitive fields (e.g. number_token) from wallet responses."""
+
+    def _clean(card: Any) -> Any:
+        if isinstance(card, dict):
+            return {
+                key: value
+                for key, value in card.items()
+                if key not in _SENSITIVE_CARD_FIELDS
+            }
+        return card
+
+    if isinstance(payload, list):
+        return [_clean(card) for card in payload]
+
+    if isinstance(payload, dict):
+        for container_key in ("cards", "items"):
+            rows = payload.get(container_key)
+            if isinstance(rows, list):
+                sanitized = dict(payload)
+                sanitized[container_key] = [_clean(card) for card in rows]
+                return sanitized
+        return _clean(payload)
+
+    return payload
+
+
 @dataclass(slots=True)
 class GetnetWalletClient:
     client_id: str
     client_secret: str
     auth_url: str = GETNET_AUTH_URL
-    cards_url: str = GETNET_WALLET_CARDS_URL
+    cards_url: str = GETNET_SEP_CARDS_URL
+    tokenize_url: str = GETNET_SEP_TOKENIZE_URL
 
     @classmethod
     def from_env(cls) -> "GetnetWalletClient":
@@ -984,12 +1046,44 @@ class GetnetWalletClient:
                 headers={"Authorization": f"Bearer {token}"},
                 params={"customer_id": customer_id},
             )
+            # SEP returns 404 when the customer has no cards yet; treat it as
+            # an empty wallet instead of surfacing an error to the caller.
+            if response.status_code == 404:
+                return []
             if response.status_code >= 400:
                 raise RuntimeError(
                     "Getnet wallet list_cards failed "
                     f"({response.status_code}): {response.text}"
                 )
-            return response.json()
+            return _sanitize_wallet_cards(response.json())
+
+    async def tokenize_card(
+        self,
+        card_number: str,
+        access_token: str | None = None,
+    ) -> str:
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            token = access_token or await self._get_access_token(client)
+            response = await client.post(
+                self.tokenize_url,
+                headers={
+                    "Authorization": f"Bearer {token}",
+                    "Content-Type": "application/json;charset=utf-8",
+                },
+                json={"card_number": card_number},
+            )
+            if response.status_code >= 400:
+                raise RuntimeError(
+                    "Getnet SEP tokenize_card failed "
+                    f"({response.status_code}): {response.text}"
+                )
+            data = response.json()
+            number_token = data.get("number_token")
+            if not number_token:
+                raise RuntimeError(
+                    f"Getnet SEP tokenize response missing number_token: {data}"
+                )
+            return str(number_token)
 
     async def create_card(
         self,
@@ -998,26 +1092,33 @@ class GetnetWalletClient:
     ) -> Any:
         async with httpx.AsyncClient(timeout=30.0) as client:
             token = access_token or await self._get_access_token(client)
-            authorization = f"Bearer {token}"
+
+            number_token = await self.tokenize_card(
+                payload.card_number, access_token=token
+            )
+
             body = payload.model_dump(exclude_none=True)
+            body.pop("card_number", None)
+            body["number_token"] = number_token
+
             logger.info(
                 "POST %s | Authorization: Bearer %s | body=%s",
                 self.cards_url,
                 _mask_token(token),
-                {**body, "card_number": "***", "security_code": "***"},
+                {**body, "number_token": "***", "security_code": "***"},
             )
             response = await client.post(
                 self.cards_url,
                 headers={
-                    "Authorization": authorization,
+                    "Authorization": f"Bearer {token}",
                     "Content-Type": "application/json",
-                    "Accept": "application/json",
+                    "Accept": "application/json; charset=utf-8",
                 },
                 json=body,
             )
             if response.status_code >= 400:
                 raise RuntimeError(
-                    "Getnet wallet create_card failed "
+                    "Getnet SEP create_card failed "
                     f"({response.status_code}): {response.text}"
                 )
             return response.json()

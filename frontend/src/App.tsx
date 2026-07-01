@@ -13,6 +13,16 @@ import { CARDS_CUSTOMER_ID, CARDS_REAL_MODE } from "./lib/config";
 
 type AppSection = "chat" | "cards";
 
+const CARDS_CUSTOMER_ID_STORAGE_KEY = "wallet.customerId";
+
+function readStoredCustomerId(): string {
+  if (typeof window === "undefined") {
+    return CARDS_CUSTOMER_ID;
+  }
+  const stored = window.localStorage.getItem(CARDS_CUSTOMER_ID_STORAGE_KEY);
+  return stored?.trim() ? stored.trim() : CARDS_CUSTOMER_ID;
+}
+
 export default function App() {
   const [activeSection, setActiveSection] = useState<AppSection>("chat");
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
@@ -22,6 +32,7 @@ export default function App() {
   const [cardsLoading, setCardsLoading] = useState(false);
   const [cardsError, setCardsError] = useState<string | null>(null);
   const [deletingCardId, setDeletingCardId] = useState<string | null>(null);
+  const [listCustomerId, setListCustomerId] = useState(readStoredCustomerId);
 
   const openCardModal = () => {
     setCardSavedNotice(null);
@@ -46,26 +57,32 @@ export default function App() {
     }
   };
 
-  const loadCards = useCallback(async () => {
-    if (!CARDS_REAL_MODE) {
-      return;
-    }
+  const loadCards = useCallback(
+    async (customerIdOverride?: string) => {
+      if (!CARDS_REAL_MODE) {
+        return;
+      }
 
-    try {
-      setCardsLoading(true);
-      setCardsError(null);
-      const cards = await getSavedCards(CARDS_CUSTOMER_ID);
-      setSavedCards(cards);
-    } catch (error) {
-      setCardsError(
-        error instanceof Error
-          ? error.message
-          : "Nao foi possivel carregar cartoes salvos.",
-      );
-    } finally {
-      setCardsLoading(false);
-    }
-  }, []);
+      const targetCustomerId =
+        (customerIdOverride ?? listCustomerId).trim() || CARDS_CUSTOMER_ID;
+
+      try {
+        setCardsLoading(true);
+        setCardsError(null);
+        const cards = await getSavedCards(targetCustomerId);
+        setSavedCards(cards);
+      } catch (error) {
+        setCardsError(
+          error instanceof Error
+            ? error.message
+            : "Nao foi possivel carregar cartoes salvos.",
+        );
+      } finally {
+        setCardsLoading(false);
+      }
+    },
+    [listCustomerId],
+  );
 
   useEffect(() => {
     if (activeSection !== "cards") {
@@ -93,7 +110,15 @@ export default function App() {
     setActiveSection("cards");
 
     if (CARDS_REAL_MODE) {
-      void loadCards();
+      const savedCustomerId = savedCard.customerId.trim() || CARDS_CUSTOMER_ID;
+      setListCustomerId(savedCustomerId);
+      if (typeof window !== "undefined") {
+        window.localStorage.setItem(
+          CARDS_CUSTOMER_ID_STORAGE_KEY,
+          savedCustomerId,
+        );
+      }
+      void loadCards(savedCustomerId);
     }
   };
 

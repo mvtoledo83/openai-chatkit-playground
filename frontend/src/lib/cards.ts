@@ -16,6 +16,7 @@ export type CardRegistrationResult = {
   label: string;
   brand: string;
   cardholderName: string;
+  customerId: string;
   endpoint: string;
   last4: string;
 };
@@ -125,6 +126,7 @@ export async function registerCard(
       label: payload.label,
       brand: payload.brand,
       cardholderName: payload.cardholderName,
+      customerId: payload.customerId,
       endpoint: CARDS_API_URL,
       last4: payload.cardNumber.slice(-4),
     };
@@ -141,6 +143,7 @@ export async function registerCard(
     label: payload.label,
     brand: payload.brand,
     cardholderName: payload.cardholderName,
+    customerId: payload.customerId,
     endpoint: CARDS_API_URL,
     last4: payload.cardNumber.slice(-4),
   };

@@ -29,7 +29,7 @@ export const CARDS_API_URL =
   readEnvString(import.meta.env.VITE_CARDS_API_URL) ?? "/wallet/cards";
 
 export const CARDS_CUSTOMER_ID =
-  readEnvString(import.meta.env.VITE_CARDS_CUSTOMER_ID) ?? "017";
+  readEnvString(import.meta.env.VITE_CARDS_CUSTOMER_ID) ?? "12345678900";
 
 export const CARDS_TOKEN_URL =
   readEnvString(import.meta.env.VITE_CARDS_TOKEN_URL) ?? "/wallet/token";

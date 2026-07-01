@@ -15,6 +15,14 @@
         "type": "active"
       },
       "metadata": {}
+    },
+    "thr_ad40e23c": {
+      "id": "thr_ad40e23c",
+      "created_at": "2026-07-01T11:52:56.912964",
+      "status": {
+        "type": "active"
+      },
+      "metadata": {}
     }
   },
   "items": {
@@ -73,6 +81,36 @@
           {
             "annotations": [],
             "text": "Bom dia! Como posso ajudar voc\u00ea hoje?",
+            "type": "output_text"
+          }
+        ]
+      }
+    ],
+    "thr_ad40e23c": [
+      {
+        "id": "msg_1e08eee5",
+        "thread_id": "thr_ad40e23c",
+        "created_at": "2026-07-01T11:52:56.925496",
+        "type": "user_message",
+        "content": [
+          {
+            "type": "input_text",
+            "text": "poderia me listar os cart\u00f5es salvos?"
+          }
+        ],
+        "attachments": [],
+        "quoted_text": "",
+        "inference_options": {}
+      },
+      {
+        "id": "msg_09e972e590f03470006a4529ced658819dac23d1be71087477",
+        "thread_id": "thr_ad40e23c",
+        "created_at": "2026-07-01T11:53:03.364936",
+        "type": "assistant_message",
+        "content": [
+          {
+            "annotations": [],
+            "text": "N\u00e3o tenho acesso aos seus cart\u00f5es salvos. Para ajudar, por favor informe onde voc\u00ea deseja listar seus cart\u00f5es (por exemplo, banco, app, site).",
             "type": "output_text"
           }
         ]
