@@ -1,9 +1,18 @@
-type AppSection = "chat" | "cards";
+export type AppSection =
+  | "journey1"
+  | "journey2"
+  | "journey3"
+  | "cards";
 
 type SidebarItem = {
   id: AppSection;
   label: string;
   helper: string;
+};
+
+type SidebarGroup = {
+  title: string;
+  items: SidebarItem[];
 };
 
 type AppSidebarProps = {
@@ -13,16 +22,36 @@ type AppSidebarProps = {
   onSelectSection: (section: AppSection) => void;
 };
 
-const ITEMS: SidebarItem[] = [
+const GROUPS: SidebarGroup[] = [
   {
-    id: "chat",
-    label: "Chat",
-    helper: "Fluxo principal de conversa",
+    title: "Jornadas",
+    items: [
+      {
+        id: "journey1",
+        label: "Jornada 1",
+        helper: "Botao Pagar + link do webcheckout Getnet",
+      },
+      {
+        id: "journey2",
+        label: "Jornada 2",
+        helper: "Cartao salvo + pagamento no chat",
+      },
+      {
+        id: "journey3",
+        label: "Jornada 3",
+        helper: "Formulario de cartao no chat (R$ 0,01)",
+      },
+    ],
   },
   {
-    id: "cards",
-    label: "Cartoes salvos",
-    helper: "Base para listagem futura",
+    title: "Cartoes",
+    items: [
+      {
+        id: "cards",
+        label: "Cartoes salvos",
+        helper: "Gerenciar cartoes cadastrados",
+      },
+    ],
   },
 ];
 
@@ -81,27 +110,36 @@ function SidebarContent({ activeSection, onSelectSection }: SidebarContentProps)
         <p className="mt-2 text-sm text-slate-600">Areas da aplicacao</p>
       </div>
 
-      <nav className="flex-1 space-y-2 overflow-y-auto px-3 py-3">
-        {ITEMS.map((item) => {
-          const active = item.id === activeSection;
+      <nav className="flex-1 space-y-4 overflow-y-auto px-3 py-3">
+        {GROUPS.map((group) => (
+          <div key={group.title} className="space-y-2">
+            <p className="px-2 text-[0.62rem] font-semibold uppercase tracking-[0.24em] text-emerald-600/90">
+              {group.title}
+            </p>
+            {group.items.map((item) => {
+              const active = item.id === activeSection;
 
-          return (
-            <button
-              key={item.id}
-              type="button"
-              onClick={() => onSelectSection(item.id)}
-              className={[
-                "w-full rounded-2xl border px-3 py-3 text-left transition",
-                active
-                  ? "border-emerald-200 bg-emerald-50/90"
-                  : "border-transparent bg-white hover:border-emerald-100 hover:bg-emerald-50/45",
-              ].join(" ")}
-            >
-              <p className="text-sm font-semibold text-slate-900">{item.label}</p>
-              <p className="mt-1 text-xs text-slate-600">{item.helper}</p>
-            </button>
-          );
-        })}
+              return (
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={() => onSelectSection(item.id)}
+                  className={[
+                    "w-full rounded-2xl border px-3 py-3 text-left transition",
+                    active
+                      ? "border-emerald-200 bg-emerald-50/90"
+                      : "border-transparent bg-white hover:border-emerald-100 hover:bg-emerald-50/45",
+                  ].join(" ")}
+                >
+                  <p className="text-sm font-semibold text-slate-900">
+                    {item.label}
+                  </p>
+                  <p className="mt-1 text-xs text-slate-600">{item.helper}</p>
+                </button>
+              );
+            })}
+          </div>
+        ))}
       </nav>
 
       <div className="border-t border-emerald-100/90 bg-emerald-50/45 px-4 py-4">

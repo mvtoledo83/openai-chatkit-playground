@@ -68,6 +68,7 @@ export type LatestThreadCheckout = {
   redirect_url: string;
   flow: CheckoutFlow;
   status?: "created" | "completed" | "cancelled" | "pending" | (string & {});
+  mode?: "iframe" | "external" | (string & {});
   updated_at: string;
 };
 

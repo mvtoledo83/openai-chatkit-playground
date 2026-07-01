@@ -50,6 +50,26 @@ GETNET_SEP_CARDS_URL = os.getenv(
     "GETNET_SEP_CARDS_URL",
     f"{GETNET_SEP_API_BASE_URL}/cards",
 )
+GETNET_PAYMENTS_URL = os.getenv(
+    "GETNET_PAYMENTS_URL",
+    "https://api.pre.globalgetnet.com/dpm/payments-gwproxy/v2/payments",
+)
+
+# Fallback cards shown in Journey 3 when the wallet listing is unavailable.
+MOCK_JOURNEY3_CARDS: list[dict[str, Any]] = [
+    {
+        "card_id": "mock_card_visa_4242",
+        "brand": "Visa",
+        "last_four_digits": "4242",
+        "cardholder_name": "Ana Silva Costa",
+    },
+    {
+        "card_id": "mock_card_master_5100",
+        "brand": "Mastercard",
+        "last_four_digits": "5100",
+        "cardholder_name": "Ana Silva Costa",
+    },
+]
 
 
 class CheckoutFlow(str, Enum):
@@ -679,6 +699,385 @@ def build_iframe_feedback_widget(status: str, payment_intent_id: str) -> Card:
     )
 
 
+def normalize_wallet_card_rows(payload: Any) -> list[dict[str, Any]]:
+    """Normalize a wallet listing payload into a compact list of cards."""
+
+    rows: list[Any] = []
+    if isinstance(payload, list):
+        rows = payload
+    elif isinstance(payload, dict):
+        for key in ("cards", "items", "data"):
+            value = payload.get(key)
+            if isinstance(value, list):
+                rows = value
+                break
+
+    result: list[dict[str, Any]] = []
+    for row in rows:
+        if not isinstance(row, dict):
+            continue
+
+        raw_last4 = (
+            row.get("last_four_digits")
+            or row.get("last4")
+            or row.get("last_digits")
+            or ""
+        )
+        last4 = str(raw_last4)[-4:] if raw_last4 else "----"
+
+        holder = row.get("cardholder_name")
+        if not holder and isinstance(row.get("cardholder"), dict):
+            holder = row["cardholder"].get("name")
+
+        result.append(
+            {
+                "card_id": str(row.get("card_id") or row.get("id") or ""),
+                "brand": str(row.get("brand") or "Cartao"),
+                "last4": last4,
+                "cardholder_name": str(holder or ""),
+            }
+        )
+    return result
+
+
+def build_journey1_intro_widget() -> Card:
+    return Card(
+        id=f"journey1-intro-{uuid4().hex[:8]}",
+        padding=16,
+        size="full",
+        background={"light": "surface-elevated", "dark": "surface-elevated"},
+        status={"text": "Jornada 1: webcheckout Getnet", "icon": "sparkle"},
+        children=[
+            Title(value="Pagamento via webcheckout Getnet", size="lg"),
+            Text(
+                value=(
+                    "Clique em Pagar para gerar a intencao de pagamento e receber o "
+                    "link do webcheckout hospedado da Getnet."
+                ),
+                size="sm",
+                color="secondary",
+            ),
+            Button(
+                label="Pagar",
+                color="info",
+                variant="solid",
+                pill=True,
+                block=True,
+                onClickAction={"type": "journey1.pay", "payload": {}},
+            ),
+        ],
+    )
+
+
+def build_journey3_intro_widget() -> Card:
+    return Card(
+        id=f"journey3-intro-{uuid4().hex[:8]}",
+        padding=16,
+        size="full",
+        background={"light": "surface-elevated", "dark": "surface-elevated"},
+        status={"text": "Jornada 3: formulario de cartao", "icon": "sparkle"},
+        children=[
+            Title(value="Pagamento com dados do cartao", size="lg"),
+            Text(
+                value=(
+                    "Clique em Pagar para preencher os dados do cartao diretamente "
+                    "no chat."
+                ),
+                size="sm",
+                color="secondary",
+            ),
+            Button(
+                label="Pagar",
+                color="info",
+                variant="solid",
+                pill=True,
+                block=True,
+                onClickAction={"type": "journey3.cardform.start", "payload": {}},
+            ),
+        ],
+    )
+
+
+def build_card_payment_form_widget(
+    defaults: dict[str, Any] | None = None,
+    error_message: str | None = None,
+) -> Card:
+    values = defaults or {}
+    cardholder_name = str(values.get("cardholder_name", ""))
+    customer_id = str(values.get("customer_id", ""))
+    card_number = str(values.get("card_number", ""))
+    expiration_month = str(values.get("expiration_month", ""))
+    expiration_year = str(values.get("expiration_year", ""))
+    security_code = str(values.get("security_code", ""))
+
+    children: list[Any] = [
+        Title(value="Dados do cartao", size="lg"),
+        Text(
+            value="Preencha os dados do cartao para o pagamento demonstrativo.",
+            size="sm",
+            color="secondary",
+        ),
+        Text(
+            value="Valor: R$ 0,01 (somente demonstracao)",
+            size="sm",
+            color="secondary",
+        ),
+    ]
+
+    if error_message:
+        children.append(Text(value=error_message, size="sm", color="danger"))
+
+    children.append(
+        Form(
+            direction="col",
+            gap=4,
+            onSubmitAction={"type": "journey3.cardform.submit", "payload": {}},
+            children=[
+                Col(
+                    gap=2,
+                    children=[
+                        Label(value="Nome do titular", fieldName="cardholder_name"),
+                        Input(
+                            name="cardholder_name",
+                            required=True,
+                            defaultValue=cardholder_name,
+                            placeholder="Ex.: Ana Silva Costa",
+                        ),
+                    ],
+                ),
+                Col(
+                    gap=2,
+                    children=[
+                        Label(value="ID do cliente", fieldName="customer_id"),
+                        Input(
+                            name="customer_id",
+                            required=True,
+                            defaultValue=customer_id,
+                            placeholder="Ex.: 12345678900",
+                        ),
+                    ],
+                ),
+                Col(
+                    gap=2,
+                    children=[
+                        Label(value="Numero do cartao", fieldName="card_number"),
+                        Input(
+                            name="card_number",
+                            required=True,
+                            defaultValue=card_number,
+                            pattern=r"^[0-9\s]{13,23}$",
+                            placeholder="0000 0000 0000 0000",
+                        ),
+                    ],
+                ),
+                Col(
+                    gap=2,
+                    children=[
+                        Label(value="Mes de expiracao", fieldName="expiration_month"),
+                        Input(
+                            name="expiration_month",
+                            required=True,
+                            defaultValue=expiration_month,
+                            pattern=r"^[0-9]{1,2}$",
+                            placeholder="MM",
+                        ),
+                    ],
+                ),
+                Col(
+                    gap=2,
+                    children=[
+                        Label(value="Ano de expiracao", fieldName="expiration_year"),
+                        Input(
+                            name="expiration_year",
+                            required=True,
+                            defaultValue=expiration_year,
+                            pattern=r"^[0-9]{2,4}$",
+                            placeholder="AA ou AAAA",
+                        ),
+                    ],
+                ),
+                Col(
+                    gap=2,
+                    children=[
+                        Label(value="CVV", fieldName="security_code"),
+                        Input(
+                            name="security_code",
+                            required=True,
+                            defaultValue=security_code,
+                            pattern=r"^[0-9]{3,4}$",
+                            placeholder="123",
+                        ),
+                    ],
+                ),
+                Button(
+                    label="Pagar R$ 0,01",
+                    color="info",
+                    variant="solid",
+                    pill=True,
+                    block=True,
+                    submit=True,
+                ),
+            ],
+        )
+    )
+
+    return Card(
+        id=f"journey3-cardform-{uuid4().hex[:8]}",
+        padding=16,
+        size="full",
+        background={"light": "surface-elevated", "dark": "surface-elevated"},
+        status={"text": "Jornada 3: formulario de cartao no chat", "icon": "sparkle"},
+        children=children,
+    )
+
+
+def build_saved_card_selection_widget(
+    cards: list[dict[str, Any]],
+    source: str = "wallet",
+) -> Card:
+    children: list[Any] = [
+        Title(value="Selecione um cartao para pagar", size="lg"),
+        Text(
+            value="Escolha um dos cartoes salvos para continuar com o pagamento.",
+            size="sm",
+            color="secondary",
+        ),
+    ]
+
+    if source == "mock":
+        children.append(
+            Text(
+                value="Exibindo cartoes de exemplo (carteira indisponivel no momento).",
+                size="sm",
+                color="warning",
+            )
+        )
+
+    if not cards:
+        children.append(
+            Text(
+                value="Nenhum cartao salvo encontrado. Cadastre um cartao para continuar.",
+                size="sm",
+                color="danger",
+            )
+        )
+
+    for card in cards:
+        last4 = str(card.get("last4") or "----")
+        brand = str(card.get("brand") or "Cartao")
+        holder = str(card.get("cardholder_name") or "")
+        label = f"{brand} - final {last4}"
+        if holder:
+            label = f"{label} ({holder})"
+        children.append(
+            Button(
+                label=label,
+                color="info",
+                variant="outline",
+                pill=True,
+                block=True,
+                onClickAction={
+                    "type": "savedcard.select",
+                    "payload": {
+                        "card_id": card.get("card_id", ""),
+                        "last4": last4,
+                        "brand": brand,
+                        "cardholder_name": holder,
+                    },
+                },
+            )
+        )
+
+    return Card(
+        id=f"savedcard-selection-{uuid4().hex[:8]}",
+        padding=16,
+        size="full",
+        background={"light": "surface-elevated", "dark": "surface-elevated"},
+        status={"text": "Jornada 2: pagamento com cartao salvo", "icon": "sparkle"},
+        children=children,
+    )
+
+
+def build_saved_card_order_widget(card: dict[str, Any]) -> Card:
+    last4 = str(card.get("last4") or "----")
+    brand = str(card.get("brand") or "Cartao")
+
+    return Card(
+        id=f"savedcard-order-{uuid4().hex[:8]}",
+        padding=16,
+        size="full",
+        background={"light": "surface-elevated", "dark": "surface-elevated"},
+        status={"text": "Revisao do pagamento", "icon": "sparkle"},
+        children=[
+            Title(value="Confirme o pagamento", size="lg"),
+            Text(
+                value="Revise o produto e o cartao selecionado antes de confirmar.",
+                size="sm",
+                color="secondary",
+            ),
+            Markdown(
+                value=(
+                    "**Produto:** Produto Demonstracao\n\n"
+                    "**Valor:** R$ 0,01\n\n"
+                    f"**Cartao:** {brand} - final {last4}"
+                )
+            ),
+            Button(
+                label="Pagar R$ 0,01",
+                color="info",
+                variant="solid",
+                pill=True,
+                block=True,
+                onClickAction={"type": "savedcard.pay", "payload": {}},
+            ),
+            Button(
+                label="Trocar cartao",
+                color="info",
+                variant="ghost",
+                pill=True,
+                block=True,
+                onClickAction={"type": "savedcard.restart", "payload": {}},
+            ),
+        ],
+    )
+
+
+def build_payment_result_widget(
+    success: bool,
+    message: str,
+    retry_action: str = "savedcard.restart",
+    retry_label: str = "Escolher outro cartao",
+) -> Card:
+    if success:
+        title = "Pagamento aprovado"
+        status_color = "success"
+        status_text = "Pagamento concluido"
+    else:
+        title = "Pagamento nao concluido"
+        status_color = "danger"
+        status_text = "Pagamento com falha"
+
+    return Card(
+        id=f"payment-result-{uuid4().hex[:8]}",
+        padding=16,
+        size="full",
+        background={"light": "surface-elevated", "dark": "surface-elevated"},
+        status={"text": status_text, "icon": "sparkle"},
+        children=[
+            Title(value=title, size="lg"),
+            Text(value=message, size="sm", color=status_color),
+            Button(
+                label=retry_label,
+                color="info",
+                variant="outline",
+                pill=True,
+                block=True,
+                onClickAction={"type": retry_action, "payload": {}},
+            ),
+        ],
+    )
+
+
 def build_request_from_journey_data(
     flow: CheckoutFlow,
     customer_data: dict[str, Any],
@@ -846,7 +1245,9 @@ def build_checkout_error_widget(error_message: str) -> Card:
     )
 
 
-def build_demo_request(flow: CheckoutFlow) -> CheckoutIntentRequest:
+def build_demo_request(
+    flow: CheckoutFlow, amount: int = 1
+) -> CheckoutIntentRequest:
     customer = Customer(
         customer_id="12345678912",
         name="Ana Silva Costa",
@@ -874,8 +1275,8 @@ def build_demo_request(flow: CheckoutFlow) -> CheckoutIntentRequest:
             flow=flow,
             order_id=f"ORDER_{uuid4().hex[:12].upper()}",
             customer=customer,
-            payment=Payment(currency="BRL", amount=10000),
-            product=[Product(title="Plano Starter", value=10000, quantity=1)],
+            payment=Payment(currency="BRL", amount=amount),
+            product=[Product(title="Produto Demonstracao", value=amount, quantity=1)],
             shipping=Shipping(
                 first_name="Ana",
                 last_name="Silva Costa",
@@ -1017,6 +1418,7 @@ class GetnetWalletClient:
     auth_url: str = GETNET_AUTH_URL
     cards_url: str = GETNET_SEP_CARDS_URL
     tokenize_url: str = GETNET_SEP_TOKENIZE_URL
+    payments_url: str = GETNET_PAYMENTS_URL
 
     @classmethod
     def from_env(cls) -> "GetnetWalletClient":
@@ -1119,6 +1521,48 @@ class GetnetWalletClient:
             if response.status_code >= 400:
                 raise RuntimeError(
                     "Getnet SEP create_card failed "
+                    f"({response.status_code}): {response.text}"
+                )
+            return response.json()
+
+    async def execute_payment(
+        self,
+        card_id: str,
+        amount: int,
+        currency: str,
+        customer_id: str,
+        order_id: str,
+        access_token: str | None = None,
+    ) -> Any:
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            token = access_token or await self._get_access_token(client)
+            body = {
+                "idempotency_key": str(uuid4()),
+                "request_id": str(uuid4()),
+                "order_id": order_id,
+                "data": {
+                    "amount": amount,
+                    "currency": currency,
+                    "customer_id": customer_id,
+                    "payment": {
+                        "payment_method": "CREDIT",
+                        "transaction_type": "FULL",
+                        "number_installments": 1,
+                    },
+                },
+            }
+            response = await client.post(
+                f"{self.payments_url}/{card_id}",
+                headers={
+                    "Authorization": f"Bearer {token}",
+                    "Content-Type": "application/json",
+                    "Accept": "application/json",
+                },
+                json=body,
+            )
+            if response.status_code >= 400:
+                raise RuntimeError(
+                    "Getnet execute_payment failed "
                     f"({response.status_code}): {response.text}"
                 )
             return response.json()

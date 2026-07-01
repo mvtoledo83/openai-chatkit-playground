@@ -23,6 +23,102 @@
         "type": "active"
       },
       "metadata": {}
+    },
+    "thr_3ab84c9b": {
+      "id": "thr_3ab84c9b",
+      "created_at": "2026-07-01T15:44:48.673418",
+      "status": {
+        "type": "active"
+      },
+      "metadata": {
+        "active_journey": 1
+      }
+    },
+    "thr_d4a15c8d": {
+      "id": "thr_d4a15c8d",
+      "created_at": "2026-07-01T15:52:11.783519",
+      "status": {
+        "type": "active"
+      },
+      "metadata": {
+        "active_journey": 2
+      }
+    },
+    "thr_6553a3c8": {
+      "id": "thr_6553a3c8",
+      "created_at": "2026-07-01T15:57:36.718471",
+      "status": {
+        "type": "active"
+      },
+      "metadata": {
+        "active_journey": 3,
+        "journey3_selected_card": {
+          "card_id": "f89ae657-664b-45bb-9c4f-4ecc4074d3f7",
+          "last4": "0001",
+          "brand": "mastercard",
+          "cardholder_name": "Gigi Buffon"
+        }
+      }
+    },
+    "thr_9baf11a2": {
+      "id": "thr_9baf11a2",
+      "created_at": "2026-07-01T16:03:14.765756",
+      "status": {
+        "type": "active"
+      },
+      "metadata": {
+        "active_journey": 1,
+        "latest_checkout": {
+          "payment_intent_id": "5f6eb2a0-4a48-41c2-bd76-ada98c52d583BR",
+          "redirect_url": "https://www.pre.globalgetnet.com/hosted-web-checkout/eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IlBBR09OWFQtQ1AtUlNBUFJJVi1ERUMtMDAxIn0.eyJwYXltZW50X2ludGVudF9pZCI6IjVmNmViMmEwLTRhNDgtNDFjMi1iZDc2LWFkYTk4YzUyZDU4M0JSIiwidHJhZGVfbmFtZSI6IkVDIFRFU1RFUyBQQUdPTlhUIE5BTyBVU0FSVEVTVEVQQVJBTUVURVJTIiwiY291bnRyeSI6IkJSIiwiand0Ijoie1wicGF5bWVudF9pbnRlbnRfaWRcIjpcIjVmNmViMmEwLTRhNDgtNDFjMi1iZDc2LWFkYTk4YzUyZDU4M0JSXCIsXCJ0cmFkZV9uYW1lXCI6XCJFQyBURVNURVMgUEFHT05YVCBOQU8gVVNBUlRFU1RFUEFSQU1FVEVSU1wiLFwiaGlkZV9nZXRuZXRfbG9nb1wiOmZhbHNlfSIsImlhdCI6MTc4MjkzMjcyMiwianRpIjoiNWY2ZWIyYTAtNGE0OC00MWMyLWJkNzYtYWRhOThjNTJkNTgzQlIifQ.o1NwA8eyCFXqjd0nfqwrQM-9hKIhwCN0vn0oOjFFk5stVLfl01llt89S-mPSM_VbDn8NvVQeh7fatGbtqC8XEqhLBJ5uXDtetzwgZbBmmvrqJX_txGq12WOk4cQ2OikdJGN48iRO6MJjnC-6UxqjdhEpKr4sQBnTR2okHc3Dfhgml0RRKrboTZ1H1hN9I8XrvnxeeEfCXoQOwKysF-SaBEM5da2KfqBqZioepIr1TQk4NVUHdC4IdZ3_Tv1tVnySG3OBjf02NmWZAjq_Q62Ir5ImMwsz8oIsRtjsNDjSgC7on-bn84UpFXMQTSrjGPzuYy6F5aMuc4z6wNQI9SwiFw",
+          "flow": "card_verification",
+          "status": "created",
+          "mode": "iframe",
+          "updated_at": "2026-07-01T19:05:22.953412+00:00"
+        }
+      }
+    },
+    "thr_ba0f9fb8": {
+      "id": "thr_ba0f9fb8",
+      "created_at": "2026-07-01T16:31:54.217498",
+      "status": {
+        "type": "active"
+      },
+      "metadata": {
+        "active_journey": 1
+      },
+      "items": {
+        "data": [],
+        "has_more": false
+      }
+    },
+    "thr_1dae9d6c": {
+      "id": "thr_1dae9d6c",
+      "created_at": "2026-07-01T16:32:35.039712",
+      "status": {
+        "type": "active"
+      },
+      "metadata": {
+        "active_journey": 2
+      },
+      "items": {
+        "data": [],
+        "has_more": false
+      }
+    },
+    "thr_0f984548": {
+      "id": "thr_0f984548",
+      "created_at": "2026-07-01T16:33:06.551096",
+      "status": {
+        "type": "active"
+      },
+      "metadata": {
+        "active_journey": 3
+      },
+      "items": {
+        "data": [],
+        "has_more": false
+      }
     }
   },
   "items": {
@@ -114,6 +210,1581 @@
             "type": "output_text"
           }
         ]
+      }
+    ],
+    "thr_3ab84c9b": [
+      {
+        "id": "msg_63c70505",
+        "thread_id": "thr_3ab84c9b",
+        "created_at": "2026-07-01T15:44:48.688866",
+        "type": "user_message",
+        "content": [
+          {
+            "type": "input_text",
+            "text": "bom dia"
+          }
+        ],
+        "attachments": [],
+        "quoted_text": "",
+        "inference_options": {}
+      },
+      {
+        "id": "msg_0dead6396a2f6d34006a456026285c8191a359afcaad6e0291",
+        "thread_id": "thr_3ab84c9b",
+        "created_at": "2026-07-01T15:44:54.470962",
+        "type": "assistant_message",
+        "content": [
+          {
+            "annotations": [],
+            "text": "Bom dia! Como posso ajudar voc\u00ea hoje?",
+            "type": "output_text"
+          }
+        ]
+      },
+      {
+        "id": "msg_cb316b20",
+        "thread_id": "thr_3ab84c9b",
+        "created_at": "2026-07-01T15:52:04.481130",
+        "type": "user_message",
+        "content": [
+          {
+            "type": "input_text",
+            "text": "quero pagar"
+          }
+        ],
+        "attachments": [],
+        "quoted_text": "",
+        "inference_options": {}
+      },
+      {
+        "id": "msg_2d266435",
+        "thread_id": "thr_3ab84c9b",
+        "created_at": "2026-07-01T15:52:04.570561",
+        "type": "widget",
+        "widget": {
+          "id": "checkout-flow-selector",
+          "type": "Card",
+          "children": [
+            {
+              "type": "Title",
+              "value": "Escolha a jornada de checkout",
+              "size": "lg"
+            },
+            {
+              "type": "Markdown",
+              "value": "Uma coleta mais leve, clara e assistida. Os dados entram em etapas e o iframe so aparece no momento final."
+            },
+            {
+              "type": "Text",
+              "value": "Selecione a alternativa que melhor combina com a necessidade do cliente.",
+              "color": "secondary",
+              "size": "sm"
+            },
+            {
+              "type": "Button",
+              "label": "Pagamento padrao",
+              "onClickAction": {
+                "type": "checkout.flow.start",
+                "payload": {
+                  "flow": "payment"
+                },
+                "handler": "server",
+                "loadingBehavior": "auto",
+                "streaming": true
+              },
+              "color": "info",
+              "variant": "solid",
+              "pill": true,
+              "block": true
+            },
+            {
+              "type": "Button",
+              "label": "Tokenizar cartao",
+              "onClickAction": {
+                "type": "checkout.flow.start",
+                "payload": {
+                  "flow": "ai_agent"
+                },
+                "handler": "server",
+                "loadingBehavior": "auto",
+                "streaming": true
+              },
+              "color": "info",
+              "variant": "outline",
+              "pill": true,
+              "block": true
+            },
+            {
+              "type": "Button",
+              "label": "Verificar cartao",
+              "onClickAction": {
+                "type": "checkout.flow.start",
+                "payload": {
+                  "flow": "card_verification"
+                },
+                "handler": "server",
+                "loadingBehavior": "auto",
+                "streaming": true
+              },
+              "color": "info",
+              "variant": "outline",
+              "pill": true,
+              "block": true
+            }
+          ],
+          "background": {
+            "dark": "surface-elevated",
+            "light": "surface-elevated"
+          },
+          "size": "full",
+          "padding": 16.0,
+          "status": {
+            "text": "Experiencia guiada",
+            "icon": "sparkle"
+          }
+        },
+        "copy_text": "Escolha uma alternativa de checkout para continuar."
+      }
+    ],
+    "thr_d4a15c8d": [
+      {
+        "id": "msg_28418aaf",
+        "thread_id": "thr_d4a15c8d",
+        "created_at": "2026-07-01T15:52:11.793255",
+        "type": "user_message",
+        "content": [
+          {
+            "type": "input_text",
+            "text": "quero pagar"
+          }
+        ],
+        "attachments": [],
+        "quoted_text": "",
+        "inference_options": {}
+      },
+      {
+        "id": "msg_61ee55fc",
+        "thread_id": "thr_d4a15c8d",
+        "created_at": "2026-07-01T15:52:11.819371",
+        "type": "widget",
+        "widget": {
+          "id": "checkout-flow-selector",
+          "type": "Card",
+          "children": [
+            {
+              "type": "Title",
+              "value": "Escolha a jornada de checkout",
+              "size": "lg"
+            },
+            {
+              "type": "Markdown",
+              "value": "Uma coleta mais leve, clara e assistida. Os dados entram em etapas e o iframe so aparece no momento final."
+            },
+            {
+              "type": "Text",
+              "value": "Selecione a alternativa que melhor combina com a necessidade do cliente.",
+              "color": "secondary",
+              "size": "sm"
+            },
+            {
+              "type": "Button",
+              "label": "Pagamento padrao",
+              "onClickAction": {
+                "type": "checkout.flow.start",
+                "payload": {
+                  "flow": "payment"
+                },
+                "handler": "server",
+                "loadingBehavior": "auto",
+                "streaming": true
+              },
+              "color": "info",
+              "variant": "solid",
+              "pill": true,
+              "block": true
+            },
+            {
+              "type": "Button",
+              "label": "Tokenizar cartao",
+              "onClickAction": {
+                "type": "checkout.flow.start",
+                "payload": {
+                  "flow": "ai_agent"
+                },
+                "handler": "server",
+                "loadingBehavior": "auto",
+                "streaming": true
+              },
+              "color": "info",
+              "variant": "outline",
+              "pill": true,
+              "block": true
+            },
+            {
+              "type": "Button",
+              "label": "Verificar cartao",
+              "onClickAction": {
+                "type": "checkout.flow.start",
+                "payload": {
+                  "flow": "card_verification"
+                },
+                "handler": "server",
+                "loadingBehavior": "auto",
+                "streaming": true
+              },
+              "color": "info",
+              "variant": "outline",
+              "pill": true,
+              "block": true
+            }
+          ],
+          "background": {
+            "dark": "surface-elevated",
+            "light": "surface-elevated"
+          },
+          "size": "full",
+          "padding": 16.0,
+          "status": {
+            "text": "Experiencia guiada",
+            "icon": "sparkle"
+          }
+        },
+        "copy_text": "Escolha uma alternativa de checkout para continuar."
+      }
+    ],
+    "thr_6553a3c8": [
+      {
+        "id": "msg_65f59880",
+        "thread_id": "thr_6553a3c8",
+        "created_at": "2026-07-01T15:57:36.723506",
+        "type": "user_message",
+        "content": [
+          {
+            "type": "input_text",
+            "text": "quero pagar"
+          }
+        ],
+        "attachments": [],
+        "quoted_text": "",
+        "inference_options": {}
+      },
+      {
+        "id": "msg_b79a7f6d",
+        "thread_id": "thr_6553a3c8",
+        "created_at": "2026-07-01T15:57:38.490844",
+        "type": "widget",
+        "widget": {
+          "id": "journey3-card-selection-6dfd1d6e",
+          "type": "Card",
+          "children": [
+            {
+              "type": "Title",
+              "value": "Selecione um cartao para pagar",
+              "size": "lg"
+            },
+            {
+              "type": "Text",
+              "value": "Escolha um dos cartoes salvos para continuar com o pagamento.",
+              "color": "secondary",
+              "size": "sm"
+            },
+            {
+              "type": "Button",
+              "label": "visa - final 1112 (Lionel Messi)",
+              "onClickAction": {
+                "type": "journey3.card.select",
+                "payload": {
+                  "card_id": "c664462a-9279-4e9c-96f6-9ed40e39f1d7",
+                  "last4": "1112",
+                  "brand": "visa",
+                  "cardholder_name": "Lionel Messi"
+                },
+                "handler": "server",
+                "loadingBehavior": "auto",
+                "streaming": true
+              },
+              "color": "info",
+              "variant": "outline",
+              "pill": true,
+              "block": true
+            },
+            {
+              "type": "Button",
+              "label": "mastercard - final 0001 (Gigi Buffon)",
+              "onClickAction": {
+                "type": "journey3.card.select",
+                "payload": {
+                  "card_id": "f89ae657-664b-45bb-9c4f-4ecc4074d3f7",
+                  "last4": "0001",
+                  "brand": "mastercard",
+                  "cardholder_name": "Gigi Buffon"
+                },
+                "handler": "server",
+                "loadingBehavior": "auto",
+                "streaming": true
+              },
+              "color": "info",
+              "variant": "outline",
+              "pill": true,
+              "block": true
+            }
+          ],
+          "background": {
+            "dark": "surface-elevated",
+            "light": "surface-elevated"
+          },
+          "size": "full",
+          "padding": 16.0,
+          "status": {
+            "text": "Jornada 3: pagamento com cartao salvo",
+            "icon": "sparkle"
+          }
+        },
+        "copy_text": "Selecione um cartao salvo para pagar."
+      },
+      {
+        "id": "msg_f1bec5ca",
+        "thread_id": "thr_6553a3c8",
+        "created_at": "2026-07-01T15:57:49.512058",
+        "type": "widget",
+        "widget": {
+          "id": "journey3-order-484c1572",
+          "type": "Card",
+          "children": [
+            {
+              "type": "Title",
+              "value": "Confirme o pagamento",
+              "size": "lg"
+            },
+            {
+              "type": "Text",
+              "value": "Revise o produto e o cartao selecionado antes de confirmar.",
+              "color": "secondary",
+              "size": "sm"
+            },
+            {
+              "type": "Markdown",
+              "value": "**Produto:** Produto Demonstracao\n\n**Valor:** R$ 0,01\n\n**Cartao:** visa - final 1112"
+            },
+            {
+              "type": "Button",
+              "label": "Pagar R$ 0,01",
+              "onClickAction": {
+                "type": "journey3.pay",
+                "payload": {},
+                "handler": "server",
+                "loadingBehavior": "auto",
+                "streaming": true
+              },
+              "color": "info",
+              "variant": "solid",
+              "pill": true,
+              "block": true
+            },
+            {
+              "type": "Button",
+              "label": "Trocar cartao",
+              "onClickAction": {
+                "type": "journey3.restart",
+                "payload": {},
+                "handler": "server",
+                "loadingBehavior": "auto",
+                "streaming": true
+              },
+              "color": "info",
+              "variant": "ghost",
+              "pill": true,
+              "block": true
+            }
+          ],
+          "background": {
+            "dark": "surface-elevated",
+            "light": "surface-elevated"
+          },
+          "size": "full",
+          "padding": 16.0,
+          "status": {
+            "text": "Revisao do pagamento",
+            "icon": "sparkle"
+          }
+        },
+        "copy_text": "Revise o pagamento e confirme."
+      },
+      {
+        "id": "msg_c7dac2a5",
+        "thread_id": "thr_6553a3c8",
+        "created_at": "2026-07-01T15:58:02.771797",
+        "type": "widget",
+        "widget": {
+          "id": "journey3-result-46702cf2",
+          "type": "Card",
+          "children": [
+            {
+              "type": "Title",
+              "value": "Pagamento nao concluido",
+              "size": "lg"
+            },
+            {
+              "type": "Text",
+              "value": "Falha ao processar o pagamento: Getnet execute_payment failed (403): <HTML><HEAD>\n<TITLE>Access Denied</TITLE>\n</HEAD><BODY>\n<H1>Access Denied</H1>\n \nYou don't have permission to access \"http&#58;&#47;&#47;api&#46;pre&#46;globalgetnet&#46;com&#47;dpm&#47;payments&#45;gwproxy&#47;v2&#47;payments&#47;c664462a&#45;9279&#45;4e9c&#45;96f6&#45;9ed40e39f1d7\" on this server.<P>\nReference&#32;&#35;18&#46;7c91002&#46;1782932282&#46;1a895e7c\n<P>https&#58;&#47;&#47;errors&#46;edgesuite&#46;net&#47;18&#46;7c91002&#46;1782932282&#46;1a895e7c</P>\n</BODY>\n</HTML>\n",
+              "color": "danger",
+              "size": "sm"
+            },
+            {
+              "type": "Button",
+              "label": "Escolher outro cartao",
+              "onClickAction": {
+                "type": "journey3.restart",
+                "payload": {},
+                "handler": "server",
+                "loadingBehavior": "auto",
+                "streaming": true
+              },
+              "color": "info",
+              "variant": "outline",
+              "pill": true,
+              "block": true
+            }
+          ],
+          "background": {
+            "dark": "surface-elevated",
+            "light": "surface-elevated"
+          },
+          "size": "full",
+          "padding": 16.0,
+          "status": {
+            "text": "Pagamento com falha",
+            "icon": "sparkle"
+          }
+        },
+        "copy_text": "Resultado do pagamento."
+      },
+      {
+        "id": "msg_f3359c1b",
+        "thread_id": "thr_6553a3c8",
+        "created_at": "2026-07-01T15:58:12.028072",
+        "type": "widget",
+        "widget": {
+          "id": "journey3-card-selection-b3e44ea0",
+          "type": "Card",
+          "children": [
+            {
+              "type": "Title",
+              "value": "Selecione um cartao para pagar",
+              "size": "lg"
+            },
+            {
+              "type": "Text",
+              "value": "Escolha um dos cartoes salvos para continuar com o pagamento.",
+              "color": "secondary",
+              "size": "sm"
+            },
+            {
+              "type": "Button",
+              "label": "visa - final 1112 (Lionel Messi)",
+              "onClickAction": {
+                "type": "journey3.card.select",
+                "payload": {
+                  "card_id": "c664462a-9279-4e9c-96f6-9ed40e39f1d7",
+                  "last4": "1112",
+                  "brand": "visa",
+                  "cardholder_name": "Lionel Messi"
+                },
+                "handler": "server",
+                "loadingBehavior": "auto",
+                "streaming": true
+              },
+              "color": "info",
+              "variant": "outline",
+              "pill": true,
+              "block": true
+            },
+            {
+              "type": "Button",
+              "label": "mastercard - final 0001 (Gigi Buffon)",
+              "onClickAction": {
+                "type": "journey3.card.select",
+                "payload": {
+                  "card_id": "f89ae657-664b-45bb-9c4f-4ecc4074d3f7",
+                  "last4": "0001",
+                  "brand": "mastercard",
+                  "cardholder_name": "Gigi Buffon"
+                },
+                "handler": "server",
+                "loadingBehavior": "auto",
+                "streaming": true
+              },
+              "color": "info",
+              "variant": "outline",
+              "pill": true,
+              "block": true
+            }
+          ],
+          "background": {
+            "dark": "surface-elevated",
+            "light": "surface-elevated"
+          },
+          "size": "full",
+          "padding": 16.0,
+          "status": {
+            "text": "Jornada 3: pagamento com cartao salvo",
+            "icon": "sparkle"
+          }
+        },
+        "copy_text": "Selecione um cartao salvo para pagar."
+      },
+      {
+        "id": "msg_75b11e8e",
+        "thread_id": "thr_6553a3c8",
+        "created_at": "2026-07-01T15:58:15.115703",
+        "type": "widget",
+        "widget": {
+          "id": "journey3-order-5597cec3",
+          "type": "Card",
+          "children": [
+            {
+              "type": "Title",
+              "value": "Confirme o pagamento",
+              "size": "lg"
+            },
+            {
+              "type": "Text",
+              "value": "Revise o produto e o cartao selecionado antes de confirmar.",
+              "color": "secondary",
+              "size": "sm"
+            },
+            {
+              "type": "Markdown",
+              "value": "**Produto:** Produto Demonstracao\n\n**Valor:** R$ 0,01\n\n**Cartao:** mastercard - final 0001"
+            },
+            {
+              "type": "Button",
+              "label": "Pagar R$ 0,01",
+              "onClickAction": {
+                "type": "journey3.pay",
+                "payload": {},
+                "handler": "server",
+                "loadingBehavior": "auto",
+                "streaming": true
+              },
+              "color": "info",
+              "variant": "solid",
+              "pill": true,
+              "block": true
+            },
+            {
+              "type": "Button",
+              "label": "Trocar cartao",
+              "onClickAction": {
+                "type": "journey3.restart",
+                "payload": {},
+                "handler": "server",
+                "loadingBehavior": "auto",
+                "streaming": true
+              },
+              "color": "info",
+              "variant": "ghost",
+              "pill": true,
+              "block": true
+            }
+          ],
+          "background": {
+            "dark": "surface-elevated",
+            "light": "surface-elevated"
+          },
+          "size": "full",
+          "padding": 16.0,
+          "status": {
+            "text": "Revisao do pagamento",
+            "icon": "sparkle"
+          }
+        },
+        "copy_text": "Revise o pagamento e confirme."
+      },
+      {
+        "id": "msg_e7fc7aee",
+        "thread_id": "thr_6553a3c8",
+        "created_at": "2026-07-01T15:58:19.039550",
+        "type": "widget",
+        "widget": {
+          "id": "journey3-result-f40e1986",
+          "type": "Card",
+          "children": [
+            {
+              "type": "Title",
+              "value": "Pagamento nao concluido",
+              "size": "lg"
+            },
+            {
+              "type": "Text",
+              "value": "Falha ao processar o pagamento: Getnet execute_payment failed (403): <HTML><HEAD>\n<TITLE>Access Denied</TITLE>\n</HEAD><BODY>\n<H1>Access Denied</H1>\n \nYou don't have permission to access \"http&#58;&#47;&#47;api&#46;pre&#46;globalgetnet&#46;com&#47;dpm&#47;payments&#45;gwproxy&#47;v2&#47;payments&#47;f89ae657&#45;664b&#45;45bb&#45;9c4f&#45;4ecc4074d3f7\" on this server.<P>\nReference&#32;&#35;18&#46;12c91002&#46;1782932298&#46;5b2c7e0b\n<P>https&#58;&#47;&#47;errors&#46;edgesuite&#46;net&#47;18&#46;12c91002&#46;1782932298&#46;5b2c7e0b</P>\n</BODY>\n</HTML>\n",
+              "color": "danger",
+              "size": "sm"
+            },
+            {
+              "type": "Button",
+              "label": "Escolher outro cartao",
+              "onClickAction": {
+                "type": "journey3.restart",
+                "payload": {},
+                "handler": "server",
+                "loadingBehavior": "auto",
+                "streaming": true
+              },
+              "color": "info",
+              "variant": "outline",
+              "pill": true,
+              "block": true
+            }
+          ],
+          "background": {
+            "dark": "surface-elevated",
+            "light": "surface-elevated"
+          },
+          "size": "full",
+          "padding": 16.0,
+          "status": {
+            "text": "Pagamento com falha",
+            "icon": "sparkle"
+          }
+        },
+        "copy_text": "Resultado do pagamento."
+      }
+    ],
+    "thr_9baf11a2": [
+      {
+        "id": "msg_8798a41e",
+        "thread_id": "thr_9baf11a2",
+        "created_at": "2026-07-01T16:03:14.797416",
+        "type": "user_message",
+        "content": [
+          {
+            "type": "input_text",
+            "text": "pagar"
+          }
+        ],
+        "attachments": [],
+        "quoted_text": "",
+        "inference_options": {}
+      },
+      {
+        "id": "msg_82ce1c34",
+        "thread_id": "thr_9baf11a2",
+        "created_at": "2026-07-01T16:03:14.905618",
+        "type": "widget",
+        "widget": {
+          "id": "checkout-flow-selector",
+          "type": "Card",
+          "children": [
+            {
+              "type": "Title",
+              "value": "Escolha a jornada de checkout",
+              "size": "lg"
+            },
+            {
+              "type": "Markdown",
+              "value": "Uma coleta mais leve, clara e assistida. Os dados entram em etapas e o iframe so aparece no momento final."
+            },
+            {
+              "type": "Text",
+              "value": "Selecione a alternativa que melhor combina com a necessidade do cliente.",
+              "color": "secondary",
+              "size": "sm"
+            },
+            {
+              "type": "Button",
+              "label": "Pagamento padrao",
+              "onClickAction": {
+                "type": "checkout.flow.start",
+                "payload": {
+                  "flow": "payment"
+                },
+                "handler": "server",
+                "loadingBehavior": "auto",
+                "streaming": true
+              },
+              "color": "info",
+              "variant": "solid",
+              "pill": true,
+              "block": true
+            },
+            {
+              "type": "Button",
+              "label": "Tokenizar cartao",
+              "onClickAction": {
+                "type": "checkout.flow.start",
+                "payload": {
+                  "flow": "ai_agent"
+                },
+                "handler": "server",
+                "loadingBehavior": "auto",
+                "streaming": true
+              },
+              "color": "info",
+              "variant": "outline",
+              "pill": true,
+              "block": true
+            },
+            {
+              "type": "Button",
+              "label": "Verificar cartao",
+              "onClickAction": {
+                "type": "checkout.flow.start",
+                "payload": {
+                  "flow": "card_verification"
+                },
+                "handler": "server",
+                "loadingBehavior": "auto",
+                "streaming": true
+              },
+              "color": "info",
+              "variant": "outline",
+              "pill": true,
+              "block": true
+            }
+          ],
+          "background": {
+            "dark": "surface-elevated",
+            "light": "surface-elevated"
+          },
+          "size": "full",
+          "padding": 16.0,
+          "status": {
+            "text": "Experiencia guiada",
+            "icon": "sparkle"
+          }
+        },
+        "copy_text": "Escolha uma alternativa de checkout para continuar."
+      },
+      {
+        "id": "msg_ffe95cec",
+        "thread_id": "thr_9baf11a2",
+        "created_at": "2026-07-01T16:04:32.451044",
+        "type": "widget",
+        "widget": {
+          "id": "checkout-customer-form-card_verification-9bec70b6",
+          "type": "Card",
+          "children": [
+            {
+              "type": "Title",
+              "value": "Etapa 1: Dados do cliente",
+              "size": "lg"
+            },
+            {
+              "type": "Text",
+              "value": "Fluxo selecionado: card_verification",
+              "color": "secondary",
+              "size": "sm"
+            },
+            {
+              "children": [
+                {
+                  "children": [
+                    {
+                      "type": "Label",
+                      "value": "Nome completo",
+                      "fieldName": "customer_name"
+                    },
+                    {
+                      "type": "Input",
+                      "name": "customer_name",
+                      "defaultValue": "",
+                      "required": true,
+                      "placeholder": "Ex.: Ana Silva Costa"
+                    }
+                  ],
+                  "gap": 2,
+                  "type": "Col"
+                },
+                {
+                  "children": [
+                    {
+                      "type": "Label",
+                      "value": "Email",
+                      "fieldName": "email"
+                    },
+                    {
+                      "type": "Input",
+                      "name": "email",
+                      "inputType": "email",
+                      "defaultValue": "",
+                      "required": true,
+                      "placeholder": "nome@empresa.com"
+                    }
+                  ],
+                  "gap": 2,
+                  "type": "Col"
+                },
+                {
+                  "children": [
+                    {
+                      "type": "Label",
+                      "value": "Documento (CPF/CNPJ)",
+                      "fieldName": "document_number"
+                    },
+                    {
+                      "type": "Input",
+                      "name": "document_number",
+                      "defaultValue": "",
+                      "required": true,
+                      "pattern": "^[0-9\\.\\-/]{11,18}$",
+                      "placeholder": "Somente numeros ou formatado"
+                    }
+                  ],
+                  "gap": 2,
+                  "type": "Col"
+                },
+                {
+                  "children": [
+                    {
+                      "type": "Label",
+                      "value": "Telefone",
+                      "fieldName": "phone_number"
+                    },
+                    {
+                      "type": "Input",
+                      "name": "phone_number",
+                      "defaultValue": "",
+                      "required": true,
+                      "pattern": "^\\+?[0-9\\s\\-\\(\\)]{10,20}$",
+                      "placeholder": "Ex.: +55 11 98765-4321"
+                    }
+                  ],
+                  "gap": 2,
+                  "type": "Col"
+                },
+                {
+                  "children": [
+                    {
+                      "type": "Label",
+                      "value": "Rua",
+                      "fieldName": "street"
+                    },
+                    {
+                      "type": "Input",
+                      "name": "street",
+                      "defaultValue": "",
+                      "required": true,
+                      "placeholder": "Ex.: Rua Augusta"
+                    }
+                  ],
+                  "gap": 2,
+                  "type": "Col"
+                },
+                {
+                  "children": [
+                    {
+                      "type": "Label",
+                      "value": "Numero",
+                      "fieldName": "number"
+                    },
+                    {
+                      "type": "Input",
+                      "name": "number",
+                      "defaultValue": "",
+                      "required": true,
+                      "pattern": "^[0-9A-Za-z\\-]{1,10}$",
+                      "placeholder": "Ex.: 2690"
+                    }
+                  ],
+                  "gap": 2,
+                  "type": "Col"
+                },
+                {
+                  "children": [
+                    {
+                      "type": "Label",
+                      "value": "Bairro",
+                      "fieldName": "district"
+                    },
+                    {
+                      "type": "Input",
+                      "name": "district",
+                      "defaultValue": "Centro",
+                      "required": true
+                    }
+                  ],
+                  "gap": 2,
+                  "type": "Col"
+                },
+                {
+                  "children": [
+                    {
+                      "type": "Label",
+                      "value": "Cidade",
+                      "fieldName": "city"
+                    },
+                    {
+                      "type": "Input",
+                      "name": "city",
+                      "defaultValue": "",
+                      "required": true
+                    }
+                  ],
+                  "gap": 2,
+                  "type": "Col"
+                },
+                {
+                  "children": [
+                    {
+                      "type": "Label",
+                      "value": "Estado",
+                      "fieldName": "state"
+                    },
+                    {
+                      "type": "Input",
+                      "name": "state",
+                      "defaultValue": "",
+                      "required": true,
+                      "pattern": "^[A-Za-z]{2}$",
+                      "placeholder": "UF, ex.: SP"
+                    }
+                  ],
+                  "gap": 2,
+                  "type": "Col"
+                },
+                {
+                  "children": [
+                    {
+                      "type": "Label",
+                      "value": "CEP",
+                      "fieldName": "postal_code"
+                    },
+                    {
+                      "type": "Input",
+                      "name": "postal_code",
+                      "defaultValue": "",
+                      "required": true,
+                      "pattern": "^[0-9\\-]{8,10}$",
+                      "placeholder": "Ex.: 01412-100"
+                    }
+                  ],
+                  "gap": 2,
+                  "type": "Col"
+                },
+                {
+                  "children": [
+                    {
+                      "type": "Label",
+                      "value": "Pais",
+                      "fieldName": "country"
+                    },
+                    {
+                      "type": "Input",
+                      "name": "country",
+                      "defaultValue": "BR",
+                      "required": true,
+                      "pattern": "^[A-Za-z]{2}$",
+                      "placeholder": "Codigo ISO2, ex.: BR"
+                    }
+                  ],
+                  "gap": 2,
+                  "type": "Col"
+                },
+                {
+                  "type": "Button",
+                  "submit": true,
+                  "label": "Continuar",
+                  "color": "info",
+                  "variant": "solid",
+                  "pill": true,
+                  "block": true
+                }
+              ],
+              "gap": 4,
+              "type": "Form",
+              "onSubmitAction": {
+                "type": "checkout.flow.customer.submit",
+                "payload": {
+                  "flow": "card_verification"
+                },
+                "handler": "server",
+                "loadingBehavior": "auto",
+                "streaming": true
+              },
+              "direction": "col"
+            },
+            {
+              "type": "Button",
+              "label": "Trocar jornada",
+              "onClickAction": {
+                "type": "checkout.flow.restart",
+                "payload": {},
+                "handler": "server",
+                "loadingBehavior": "auto",
+                "streaming": true
+              },
+              "color": "info",
+              "variant": "ghost",
+              "pill": true
+            }
+          ],
+          "background": {
+            "dark": "surface-elevated",
+            "light": "surface-elevated"
+          },
+          "size": "full",
+          "padding": 16.0,
+          "status": {
+            "text": "Formulario conversacional",
+            "icon": "sparkle"
+          }
+        },
+        "copy_text": "Etapa 1 iniciada: dados do cliente"
+      },
+      {
+        "id": "msg_b04222ba",
+        "thread_id": "thr_9baf11a2",
+        "created_at": "2026-07-01T16:05:15.669820",
+        "type": "widget",
+        "widget": {
+          "id": "checkout-review-card_verification-5d39832c",
+          "type": "Card",
+          "children": [
+            {
+              "type": "Title",
+              "value": "Etapa final: confirmar checkout",
+              "size": "lg"
+            },
+            {
+              "type": "Text",
+              "value": "Confira os dados abaixo com calma. Quando estiver tudo certo, a etapa final abre o checkout hospedado.",
+              "color": "secondary",
+              "size": "sm"
+            },
+            {
+              "type": "Markdown",
+              "value": "```text\n{\n'country': 'BR',\n 'checkout_type': 'IFRAME',\n 'order_id': 'ORDER_E0A101908BEA',\n 'customer': {\n'customer_id': '00000000000',\n 'name': 'Marcos Vinicius',\n 'first_name': 'Marcos',\n 'last_name': 'Vinicius',\n 'email': 'eu@eu.com',\n 'checked_email': False,\n 'document_type': 'CPF',\n 'document_number': '00000000000',\n 'phone_number': '552197681234',\n 'billing_address': {\n'street': 'rua monsenhor batistuta',\n 'number': '325',\n 'country': 'BR',\n 'postal_code': '20571000',\n 'district': 'Centro',\n 'city': 'Rio de Janeiro',\n 'state': 'RJ'}},\n 'configurations': {\n'card_verification': True}}\n```"
+            },
+            {
+              "type": "Button",
+              "label": "Confirmar e gerar checkout",
+              "onClickAction": {
+                "type": "checkout.flow.confirm",
+                "payload": {
+                  "flow": "card_verification"
+                },
+                "handler": "server",
+                "loadingBehavior": "auto",
+                "streaming": true
+              },
+              "color": "info",
+              "variant": "solid",
+              "pill": true,
+              "block": true
+            },
+            {
+              "type": "Button",
+              "label": "Reiniciar jornada",
+              "onClickAction": {
+                "type": "checkout.flow.restart",
+                "payload": {},
+                "handler": "server",
+                "loadingBehavior": "auto",
+                "streaming": true
+              },
+              "color": "info",
+              "variant": "ghost",
+              "pill": true,
+              "block": true
+            }
+          ],
+          "background": {
+            "dark": "surface-elevated",
+            "light": "surface-elevated"
+          },
+          "size": "full",
+          "padding": 16.0,
+          "status": {
+            "text": "Revisao final",
+            "icon": "sparkle"
+          }
+        },
+        "copy_text": "Dados do cliente prontos. Revise e confirme."
+      },
+      {
+        "id": "msg_73110b88",
+        "thread_id": "thr_9baf11a2",
+        "created_at": "2026-07-01T16:05:22.958709",
+        "type": "widget",
+        "widget": {
+          "id": "checkout-result-5f6eb2a0-4a48-41c2-bd76-ada98c52d583BR",
+          "type": "Card",
+          "children": [
+            {
+              "type": "Title",
+              "value": "Checkout iniciado",
+              "size": "lg"
+            },
+            {
+              "type": "Text",
+              "value": "Flow: card_verification",
+              "color": "secondary",
+              "size": "sm"
+            },
+            {
+              "type": "Text",
+              "value": "Payment intent: 5f6eb2a0-4a48-41c2-bd76-ada98c52d583BR",
+              "size": "sm"
+            },
+            {
+              "type": "Markdown",
+              "value": "[Abrir checkout agora](https://www.pre.globalgetnet.com/hosted-web-checkout/eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IlBBR09OWFQtQ1AtUlNBUFJJVi1ERUMtMDAxIn0.eyJwYXltZW50X2ludGVudF9pZCI6IjVmNmViMmEwLTRhNDgtNDFjMi1iZDc2LWFkYTk4YzUyZDU4M0JSIiwidHJhZGVfbmFtZSI6IkVDIFRFU1RFUyBQQUdPTlhUIE5BTyBVU0FSVEVTVEVQQVJBTUVURVJTIiwiY291bnRyeSI6IkJSIiwiand0Ijoie1wicGF5bWVudF9pbnRlbnRfaWRcIjpcIjVmNmViMmEwLTRhNDgtNDFjMi1iZDc2LWFkYTk4YzUyZDU4M0JSXCIsXCJ0cmFkZV9uYW1lXCI6XCJFQyBURVNURVMgUEFHT05YVCBOQU8gVVNBUlRFU1RFUEFSQU1FVEVSU1wiLFwiaGlkZV9nZXRuZXRfbG9nb1wiOmZhbHNlfSIsImlhdCI6MTc4MjkzMjcyMiwianRpIjoiNWY2ZWIyYTAtNGE0OC00MWMyLWJkNzYtYWRhOThjNTJkNTgzQlIifQ.o1NwA8eyCFXqjd0nfqwrQM-9hKIhwCN0vn0oOjFFk5stVLfl01llt89S-mPSM_VbDn8NvVQeh7fatGbtqC8XEqhLBJ5uXDtetzwgZbBmmvrqJX_txGq12WOk4cQ2OikdJGN48iRO6MJjnC-6UxqjdhEpKr4sQBnTR2okHc3Dfhgml0RRKrboTZ1H1hN9I8XrvnxeeEfCXoQOwKysF-SaBEM5da2KfqBqZioepIr1TQk4NVUHdC4IdZ3_Tv1tVnySG3OBjf02NmWZAjq_Q62Ir5ImMwsz8oIsRtjsNDjSgC7on-bn84UpFXMQTSrjGPzuYy6F5aMuc4z6wNQI9SwiFw)\n\nSe o link nao abrir automaticamente no ambiente atual, clique na URL que uma nova aba se abrir\u00e1."
+            }
+          ],
+          "background": {
+            "dark": "surface-elevated",
+            "light": "surface-elevated"
+          },
+          "size": "full",
+          "padding": 16.0,
+          "status": {
+            "text": "Checkout criado",
+            "icon": "check-circle"
+          }
+        },
+        "copy_text": "Checkout criado: https://www.pre.globalgetnet.com/hosted-web-checkout/eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IlBBR09OWFQtQ1AtUlNBUFJJVi1ERUMtMDAxIn0.eyJwYXltZW50X2ludGVudF9pZCI6IjVmNmViMmEwLTRhNDgtNDFjMi1iZDc2LWFkYTk4YzUyZDU4M0JSIiwidHJhZGVfbmFtZSI6IkVDIFRFU1RFUyBQQUdPTlhUIE5BTyBVU0FSVEVTVEVQQVJBTUVURVJTIiwiY291bnRyeSI6IkJSIiwiand0Ijoie1wicGF5bWVudF9pbnRlbnRfaWRcIjpcIjVmNmViMmEwLTRhNDgtNDFjMi1iZDc2LWFkYTk4YzUyZDU4M0JSXCIsXCJ0cmFkZV9uYW1lXCI6XCJFQyBURVNURVMgUEFHT05YVCBOQU8gVVNBUlRFU1RFUEFSQU1FVEVSU1wiLFwiaGlkZV9nZXRuZXRfbG9nb1wiOmZhbHNlfSIsImlhdCI6MTc4MjkzMjcyMiwianRpIjoiNWY2ZWIyYTAtNGE0OC00MWMyLWJkNzYtYWRhOThjNTJkNTgzQlIifQ.o1NwA8eyCFXqjd0nfqwrQM-9hKIhwCN0vn0oOjFFk5stVLfl01llt89S-mPSM_VbDn8NvVQeh7fatGbtqC8XEqhLBJ5uXDtetzwgZbBmmvrqJX_txGq12WOk4cQ2OikdJGN48iRO6MJjnC-6UxqjdhEpKr4sQBnTR2okHc3Dfhgml0RRKrboTZ1H1hN9I8XrvnxeeEfCXoQOwKysF-SaBEM5da2KfqBqZioepIr1TQk4NVUHdC4IdZ3_Tv1tVnySG3OBjf02NmWZAjq_Q62Ir5ImMwsz8oIsRtjsNDjSgC7on-bn84UpFXMQTSrjGPzuYy6F5aMuc4z6wNQI9SwiFw"
+      }
+    ],
+    "thr_ba0f9fb8": [
+      {
+        "id": "msg_e082c48b",
+        "thread_id": "thr_ba0f9fb8",
+        "created_at": "2026-07-01T16:31:54.239632",
+        "type": "user_message",
+        "content": [
+          {
+            "type": "input_text",
+            "text": "pagar"
+          }
+        ],
+        "attachments": [],
+        "quoted_text": "",
+        "inference_options": {}
+      },
+      {
+        "id": "msg_5fd0b4e1",
+        "thread_id": "thr_ba0f9fb8",
+        "created_at": "2026-07-01T16:31:54.301227",
+        "type": "widget",
+        "widget": {
+          "id": "journey1-intro-397df6ad",
+          "type": "Card",
+          "children": [
+            {
+              "type": "Title",
+              "value": "Pagamento via webcheckout Getnet",
+              "size": "lg"
+            },
+            {
+              "type": "Text",
+              "value": "Clique em Pagar para gerar a intencao de pagamento e receber o link do webcheckout hospedado da Getnet.",
+              "color": "secondary",
+              "size": "sm"
+            },
+            {
+              "type": "Button",
+              "label": "Pagar",
+              "onClickAction": {
+                "type": "journey1.pay",
+                "payload": {},
+                "handler": "server",
+                "loadingBehavior": "auto",
+                "streaming": true
+              },
+              "color": "info",
+              "variant": "solid",
+              "pill": true,
+              "block": true
+            }
+          ],
+          "background": {
+            "dark": "surface-elevated",
+            "light": "surface-elevated"
+          },
+          "size": "full",
+          "padding": 16.0,
+          "status": {
+            "text": "Jornada 1: webcheckout Getnet",
+            "icon": "sparkle"
+          }
+        },
+        "copy_text": "Clique em Pagar para gerar o link do webcheckout."
+      },
+      {
+        "id": "msg_095f4247",
+        "thread_id": "thr_ba0f9fb8",
+        "created_at": "2026-07-01T16:31:59.655305",
+        "type": "widget",
+        "widget": {
+          "id": "checkout-result-763084b5-7d6a-4010-b0a4-6187953abc34BR",
+          "type": "Card",
+          "children": [
+            {
+              "type": "Title",
+              "value": "Checkout iniciado",
+              "size": "lg"
+            },
+            {
+              "type": "Text",
+              "value": "Flow: payment",
+              "color": "secondary",
+              "size": "sm"
+            },
+            {
+              "type": "Text",
+              "value": "Payment intent: 763084b5-7d6a-4010-b0a4-6187953abc34BR",
+              "size": "sm"
+            },
+            {
+              "type": "Markdown",
+              "value": "[Abrir checkout agora](https://www.pre.globalgetnet.com/hosted-web-checkout/eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IlBBR09OWFQtQ1AtUlNBUFJJVi1ERUMtMDAxIn0.eyJwYXltZW50X2ludGVudF9pZCI6Ijc2MzA4NGI1LTdkNmEtNDAxMC1iMGE0LTYxODc5NTNhYmMzNEJSIiwidHJhZGVfbmFtZSI6IkVDIFRFU1RFUyBQQUdPTlhUIE5BTyBVU0FSVEVTVEVQQVJBTUVURVJTIiwiY291bnRyeSI6IkJSIiwiand0Ijoie1wicGF5bWVudF9pbnRlbnRfaWRcIjpcIjc2MzA4NGI1LTdkNmEtNDAxMC1iMGE0LTYxODc5NTNhYmMzNEJSXCIsXCJ0cmFkZV9uYW1lXCI6XCJFQyBURVNURVMgUEFHT05YVCBOQU8gVVNBUlRFU1RFUEFSQU1FVEVSU1wiLFwiaGlkZV9nZXRuZXRfbG9nb1wiOmZhbHNlfSIsImlhdCI6MTc4MjkzNDMxOSwianRpIjoiNzYzMDg0YjUtN2Q2YS00MDEwLWIwYTQtNjE4Nzk1M2FiYzM0QlIifQ.MkDlBmoaIfUgJ5F5Wo6ByvlgprvHtUSrAFApWnF4to9NUyKCxPTaUowzQdkChlkQsDroTX7YVHY-YVpY5-XuB7IybI_GsQd5iaFH5fgHdSMtUPq1U9BsCCplCGIX2ASdOL-ZBb4SbSpveh0QTYbNnFyAyy5Gd3nfIgXNiv5LfT8gV7dxAyCNusW3b8AS4PNJCYGnRGp-3Gcny8sKT5sZsqHELwHrd3BcZMUthKlRpiXcpMW2AVaDQxv4wVoWRe9rxRuz8dBq1w3GyBf8w9kCuW8RdAyW4WFSXv29lsd6uPBAPxy7Nzfc0iGx6mN8DSCWZfk2GQF4Tvv841g1l-QiDQ)\n\nSe o link nao abrir automaticamente no ambiente atual, clique na URL que uma nova aba se abrir\u00e1."
+            }
+          ],
+          "background": {
+            "dark": "surface-elevated",
+            "light": "surface-elevated"
+          },
+          "size": "full",
+          "padding": 16.0,
+          "status": {
+            "text": "Checkout criado",
+            "icon": "check-circle"
+          }
+        },
+        "copy_text": "Link do webcheckout gerado: https://www.pre.globalgetnet.com/hosted-web-checkout/eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IlBBR09OWFQtQ1AtUlNBUFJJVi1ERUMtMDAxIn0.eyJwYXltZW50X2ludGVudF9pZCI6Ijc2MzA4NGI1LTdkNmEtNDAxMC1iMGE0LTYxODc5NTNhYmMzNEJSIiwidHJhZGVfbmFtZSI6IkVDIFRFU1RFUyBQQUdPTlhUIE5BTyBVU0FSVEVTVEVQQVJBTUVURVJTIiwiY291bnRyeSI6IkJSIiwiand0Ijoie1wicGF5bWVudF9pbnRlbnRfaWRcIjpcIjc2MzA4NGI1LTdkNmEtNDAxMC1iMGE0LTYxODc5NTNhYmMzNEJSXCIsXCJ0cmFkZV9uYW1lXCI6XCJFQyBURVNURVMgUEFHT05YVCBOQU8gVVNBUlRFU1RFUEFSQU1FVEVSU1wiLFwiaGlkZV9nZXRuZXRfbG9nb1wiOmZhbHNlfSIsImlhdCI6MTc4MjkzNDMxOSwianRpIjoiNzYzMDg0YjUtN2Q2YS00MDEwLWIwYTQtNjE4Nzk1M2FiYzM0QlIifQ.MkDlBmoaIfUgJ5F5Wo6ByvlgprvHtUSrAFApWnF4to9NUyKCxPTaUowzQdkChlkQsDroTX7YVHY-YVpY5-XuB7IybI_GsQd5iaFH5fgHdSMtUPq1U9BsCCplCGIX2ASdOL-ZBb4SbSpveh0QTYbNnFyAyy5Gd3nfIgXNiv5LfT8gV7dxAyCNusW3b8AS4PNJCYGnRGp-3Gcny8sKT5sZsqHELwHrd3BcZMUthKlRpiXcpMW2AVaDQxv4wVoWRe9rxRuz8dBq1w3GyBf8w9kCuW8RdAyW4WFSXv29lsd6uPBAPxy7Nzfc0iGx6mN8DSCWZfk2GQF4Tvv841g1l-QiDQ"
+      }
+    ],
+    "thr_1dae9d6c": [
+      {
+        "id": "msg_2ccd7788",
+        "thread_id": "thr_1dae9d6c",
+        "created_at": "2026-07-01T16:32:35.045158",
+        "type": "user_message",
+        "content": [
+          {
+            "type": "input_text",
+            "text": "quero pagar"
+          }
+        ],
+        "attachments": [],
+        "quoted_text": "",
+        "inference_options": {}
+      },
+      {
+        "id": "msg_b8e0c656",
+        "thread_id": "thr_1dae9d6c",
+        "created_at": "2026-07-01T16:32:36.744141",
+        "type": "widget",
+        "widget": {
+          "id": "savedcard-selection-b5ef9c71",
+          "type": "Card",
+          "children": [
+            {
+              "type": "Title",
+              "value": "Selecione um cartao para pagar",
+              "size": "lg"
+            },
+            {
+              "type": "Text",
+              "value": "Escolha um dos cartoes salvos para continuar com o pagamento.",
+              "color": "secondary",
+              "size": "sm"
+            },
+            {
+              "type": "Button",
+              "label": "visa - final 1112 (Lionel Messi)",
+              "onClickAction": {
+                "type": "savedcard.select",
+                "payload": {
+                  "card_id": "c664462a-9279-4e9c-96f6-9ed40e39f1d7",
+                  "last4": "1112",
+                  "brand": "visa",
+                  "cardholder_name": "Lionel Messi"
+                },
+                "handler": "server",
+                "loadingBehavior": "auto",
+                "streaming": true
+              },
+              "color": "info",
+              "variant": "outline",
+              "pill": true,
+              "block": true
+            },
+            {
+              "type": "Button",
+              "label": "mastercard - final 0001 (Gigi Buffon)",
+              "onClickAction": {
+                "type": "savedcard.select",
+                "payload": {
+                  "card_id": "f89ae657-664b-45bb-9c4f-4ecc4074d3f7",
+                  "last4": "0001",
+                  "brand": "mastercard",
+                  "cardholder_name": "Gigi Buffon"
+                },
+                "handler": "server",
+                "loadingBehavior": "auto",
+                "streaming": true
+              },
+              "color": "info",
+              "variant": "outline",
+              "pill": true,
+              "block": true
+            }
+          ],
+          "background": {
+            "dark": "surface-elevated",
+            "light": "surface-elevated"
+          },
+          "size": "full",
+          "padding": 16.0,
+          "status": {
+            "text": "Jornada 2: pagamento com cartao salvo",
+            "icon": "sparkle"
+          }
+        },
+        "copy_text": "Selecione um cartao salvo para pagar."
+      }
+    ],
+    "thr_0f984548": [
+      {
+        "id": "msg_457ae817",
+        "thread_id": "thr_0f984548",
+        "created_at": "2026-07-01T16:33:06.559038",
+        "type": "user_message",
+        "content": [
+          {
+            "type": "input_text",
+            "text": "pagar"
+          }
+        ],
+        "attachments": [],
+        "quoted_text": "",
+        "inference_options": {}
+      },
+      {
+        "id": "msg_f67aad1f",
+        "thread_id": "thr_0f984548",
+        "created_at": "2026-07-01T16:33:06.603024",
+        "type": "widget",
+        "widget": {
+          "id": "journey3-intro-6ee65d33",
+          "type": "Card",
+          "children": [
+            {
+              "type": "Title",
+              "value": "Pagamento com dados do cartao",
+              "size": "lg"
+            },
+            {
+              "type": "Text",
+              "value": "Clique em Pagar para preencher os dados do cartao diretamente no chat.",
+              "color": "secondary",
+              "size": "sm"
+            },
+            {
+              "type": "Button",
+              "label": "Pagar",
+              "onClickAction": {
+                "type": "journey3.cardform.start",
+                "payload": {},
+                "handler": "server",
+                "loadingBehavior": "auto",
+                "streaming": true
+              },
+              "color": "info",
+              "variant": "solid",
+              "pill": true,
+              "block": true
+            }
+          ],
+          "background": {
+            "dark": "surface-elevated",
+            "light": "surface-elevated"
+          },
+          "size": "full",
+          "padding": 16.0,
+          "status": {
+            "text": "Jornada 3: formulario de cartao",
+            "icon": "sparkle"
+          }
+        },
+        "copy_text": "Clique em Pagar para preencher os dados do cartao."
+      },
+      {
+        "id": "msg_41fae0ad",
+        "thread_id": "thr_0f984548",
+        "created_at": "2026-07-01T16:33:09.502682",
+        "type": "widget",
+        "widget": {
+          "id": "journey3-cardform-8bd1bb86",
+          "type": "Card",
+          "children": [
+            {
+              "type": "Title",
+              "value": "Dados do cartao",
+              "size": "lg"
+            },
+            {
+              "type": "Text",
+              "value": "Preencha os dados do cartao para o pagamento demonstrativo.",
+              "color": "secondary",
+              "size": "sm"
+            },
+            {
+              "type": "Text",
+              "value": "Valor: R$ 0,01 (somente demonstracao)",
+              "color": "secondary",
+              "size": "sm"
+            },
+            {
+              "children": [
+                {
+                  "children": [
+                    {
+                      "type": "Label",
+                      "value": "Nome do titular",
+                      "fieldName": "cardholder_name"
+                    },
+                    {
+                      "type": "Input",
+                      "name": "cardholder_name",
+                      "defaultValue": "",
+                      "required": true,
+                      "placeholder": "Ex.: Ana Silva Costa"
+                    }
+                  ],
+                  "gap": 2,
+                  "type": "Col"
+                },
+                {
+                  "children": [
+                    {
+                      "type": "Label",
+                      "value": "ID do cliente",
+                      "fieldName": "customer_id"
+                    },
+                    {
+                      "type": "Input",
+                      "name": "customer_id",
+                      "defaultValue": "12345678900",
+                      "required": true,
+                      "placeholder": "Ex.: 12345678900"
+                    }
+                  ],
+                  "gap": 2,
+                  "type": "Col"
+                },
+                {
+                  "children": [
+                    {
+                      "type": "Label",
+                      "value": "Numero do cartao",
+                      "fieldName": "card_number"
+                    },
+                    {
+                      "type": "Input",
+                      "name": "card_number",
+                      "defaultValue": "",
+                      "required": true,
+                      "pattern": "^[0-9\\s]{13,23}$",
+                      "placeholder": "0000 0000 0000 0000"
+                    }
+                  ],
+                  "gap": 2,
+                  "type": "Col"
+                },
+                {
+                  "children": [
+                    {
+                      "type": "Label",
+                      "value": "Mes de expiracao",
+                      "fieldName": "expiration_month"
+                    },
+                    {
+                      "type": "Input",
+                      "name": "expiration_month",
+                      "defaultValue": "",
+                      "required": true,
+                      "pattern": "^[0-9]{1,2}$",
+                      "placeholder": "MM"
+                    }
+                  ],
+                  "gap": 2,
+                  "type": "Col"
+                },
+                {
+                  "children": [
+                    {
+                      "type": "Label",
+                      "value": "Ano de expiracao",
+                      "fieldName": "expiration_year"
+                    },
+                    {
+                      "type": "Input",
+                      "name": "expiration_year",
+                      "defaultValue": "",
+                      "required": true,
+                      "pattern": "^[0-9]{2,4}$",
+                      "placeholder": "AA ou AAAA"
+                    }
+                  ],
+                  "gap": 2,
+                  "type": "Col"
+                },
+                {
+                  "children": [
+                    {
+                      "type": "Label",
+                      "value": "CVV",
+                      "fieldName": "security_code"
+                    },
+                    {
+                      "type": "Input",
+                      "name": "security_code",
+                      "defaultValue": "",
+                      "required": true,
+                      "pattern": "^[0-9]{3,4}$",
+                      "placeholder": "123"
+                    }
+                  ],
+                  "gap": 2,
+                  "type": "Col"
+                },
+                {
+                  "type": "Button",
+                  "submit": true,
+                  "label": "Pagar R$ 0,01",
+                  "color": "info",
+                  "variant": "solid",
+                  "pill": true,
+                  "block": true
+                }
+              ],
+              "gap": 4,
+              "type": "Form",
+              "onSubmitAction": {
+                "type": "journey3.cardform.submit",
+                "payload": {},
+                "handler": "server",
+                "loadingBehavior": "auto",
+                "streaming": true
+              },
+              "direction": "col"
+            }
+          ],
+          "background": {
+            "dark": "surface-elevated",
+            "light": "surface-elevated"
+          },
+          "size": "full",
+          "padding": 16.0,
+          "status": {
+            "text": "Jornada 3: formulario de cartao no chat",
+            "icon": "sparkle"
+          }
+        },
+        "copy_text": "Preencha os dados do cartao para o pagamento demonstrativo."
       }
     ]
   }

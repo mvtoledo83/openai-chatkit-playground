@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
-import { ChatKitPanel } from "./components/ChatKitPanel";
+import { ChatKitPanel, type JourneyId } from "./components/ChatKitPanel";
 import { AppHeader } from "./components/layout/AppHeader";
-import { AppSidebar } from "./components/layout/AppSidebar";
+import { AppSidebar, type AppSection } from "./components/layout/AppSidebar";
 import { CardRegistrationModal } from "./components/modals/CardRegistrationModal";
 import {
   getSavedCards,
@@ -11,9 +11,16 @@ import {
 } from "./lib/cards";
 import { CARDS_CUSTOMER_ID, CARDS_REAL_MODE } from "./lib/config";
 
-type AppSection = "chat" | "cards";
-
 const CARDS_CUSTOMER_ID_STORAGE_KEY = "wallet.customerId";
+
+const JOURNEY_SECTIONS: Record<
+  Exclude<AppSection, "cards">,
+  JourneyId
+> = {
+  journey1: 1,
+  journey2: 2,
+  journey3: 3,
+};
 
 function readStoredCustomerId(): string {
   if (typeof window === "undefined") {
@@ -24,7 +31,7 @@ function readStoredCustomerId(): string {
 }
 
 export default function App() {
-  const [activeSection, setActiveSection] = useState<AppSection>("chat");
+  const [activeSection, setActiveSection] = useState<AppSection>("journey1");
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [cardModalOpen, setCardModalOpen] = useState(false);
   const [cardSavedNotice, setCardSavedNotice] = useState<string | null>(null);
@@ -142,9 +149,7 @@ export default function App() {
           />
 
           <div className="min-h-0 flex-1 overflow-hidden">
-            {activeSection === "chat" ? (
-              <ChatKitPanel />
-            ) : (
+            {activeSection === "cards" ? (
               <section className="relative flex h-full min-h-[80vh] w-full flex-col overflow-hidden rounded-[2rem] border border-emerald-200/80 bg-white/92 p-6 shadow-[0_28px_80px_rgba(13,127,105,0.14)] backdrop-blur-xl md:p-8">
                 <div className="pointer-events-none absolute inset-x-0 top-0 h-28 bg-gradient-to-r from-emerald-100/80 via-white to-cyan-50/70" />
                 <div className="relative">
@@ -239,6 +244,11 @@ export default function App() {
                   </p>
                 ) : null}
               </section>
+            ) : (
+              <ChatKitPanel
+                key={activeSection}
+                journey={JOURNEY_SECTIONS[activeSection]}
+              />
             )}
           </div>
         </div>

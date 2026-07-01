@@ -17,16 +17,26 @@ from .checkout import (
     CheckoutIntentRequest,
     CheckoutFlow,
     GetnetClient,
+    GetnetWalletClient,
+    build_card_payment_form_widget,
     build_checkout_flow_selector_widget,
     build_checkout_error_widget,
     build_checkout_review_widget,
     build_checkout_result_widget,
     build_customer_form_widget,
+    build_demo_request,
     build_iframe_feedback_widget,
+    build_journey1_intro_widget,
+    build_journey3_intro_widget,
     build_payment_form_widget,
+    build_payment_result_widget,
     build_request_from_journey_data,
+    build_saved_card_order_widget,
+    build_saved_card_selection_widget,
     is_checkout_request,
     normalize_flow,
+    normalize_wallet_card_rows,
+    MOCK_JOURNEY3_CARDS,
 )
 from .memory_store import MemoryStore
 from agents import Agent
@@ -99,11 +109,23 @@ class StarterChatServer(ChatKitServer[dict[str, Any]]):
 
         checkout_source = item or _latest_user_message(items)
         if checkout_source is not None and _checkout_requested(checkout_source):
-            widget = build_checkout_flow_selector_widget()
+            active_journey = _resolve_active_journey(thread, context)
+            _remember_active_journey(thread, active_journey or 1, context)
+            if active_journey == 2:
+                cards, source = await _load_saved_cards(thread)
+                widget = build_saved_card_selection_widget(cards, source)
+                copy_text = "Selecione um cartao salvo para pagar."
+            elif active_journey == 3:
+                widget = build_journey3_intro_widget()
+                copy_text = "Clique em Pagar para preencher os dados do cartao."
+            else:
+                widget = build_journey1_intro_widget()
+                copy_text = "Clique em Pagar para gerar o link do webcheckout."
+            await self.store.save_thread(thread, context=context)
             async for event in stream_widget(
                 thread,
                 widget,
-                copy_text="Escolha uma alternativa de checkout para continuar.",
+                copy_text=copy_text,
                 generate_id=lambda item_type: self.store.generate_item_id(
                     item_type, thread, context
                 ),
@@ -138,6 +160,134 @@ class StarterChatServer(ChatKitServer[dict[str, Any]]):
         _ = sender
 
         payload = action.payload if isinstance(action.payload, dict) else {}
+
+        if action.type == "journey.select":
+            journey_num = _coerce_journey(payload.get("journey"))
+            thread.metadata["active_journey"] = journey_num
+            thread.metadata.pop("checkout_journey", None)
+            thread.metadata.pop("savedcard_selected_card", None)
+            customer_id = str(
+                payload.get("customerId") or payload.get("customer_id") or ""
+            ).strip()
+            if customer_id:
+                thread.metadata["savedcard_customer_id"] = customer_id
+            await self.store.save_thread(thread, context=context)
+
+            if journey_num == 2:
+                cards, source = await _load_saved_cards(thread)
+                widget = build_saved_card_selection_widget(cards, source)
+                copy_text = "Selecione um cartao salvo para pagar."
+            elif journey_num == 3:
+                widget = build_journey3_intro_widget()
+                copy_text = "Clique em Pagar para preencher os dados do cartao."
+            else:
+                widget = build_journey1_intro_widget()
+                copy_text = "Clique em Pagar para gerar o link do webcheckout."
+            async for event in _stream_checkout_widget(
+                self, thread, context, widget, copy_text
+            ):
+                yield event
+            return
+
+        if action.type == "journey1.pay":
+            async for event in _handle_journey1_pay(self, thread, context):
+                yield event
+            return
+
+        if action.type == "journey3.cardform.start":
+            thread.metadata["active_journey"] = 3
+            await self.store.save_thread(thread, context=context)
+            widget = build_card_payment_form_widget(
+                defaults={"customer_id": _default_saved_card_customer_id(thread)}
+            )
+            async for event in _stream_checkout_widget(
+                self,
+                thread,
+                context,
+                widget,
+                "Preencha os dados do cartao para o pagamento demonstrativo.",
+            ):
+                yield event
+            return
+
+        if action.type == "journey3.cardform.submit":
+            thread.metadata["active_journey"] = 3
+            await self.store.save_thread(thread, context=context)
+            form_values = _extract_form_values(payload)
+            required = [
+                "cardholder_name",
+                "customer_id",
+                "card_number",
+                "expiration_month",
+                "expiration_year",
+                "security_code",
+            ]
+            missing = [key for key in required if not str(form_values.get(key, "")).strip()]
+            if missing:
+                widget = build_card_payment_form_widget(
+                    defaults=form_values,
+                    error_message="Preencha todos os campos obrigatorios do cartao.",
+                )
+                async for event in _stream_checkout_widget(
+                    self,
+                    thread,
+                    context,
+                    widget,
+                    "Dados incompletos. Revise o formulario.",
+                ):
+                    yield event
+                return
+
+            brand = _detect_card_brand(str(form_values.get("card_number", "")))
+            last4 = _last_four(str(form_values.get("card_number", "")))
+            widget = build_payment_result_widget(
+                True,
+                (
+                    f"Pagamento de R$ 0,01 concluido (demonstracao) com o cartao "
+                    f"{brand} final {last4}."
+                ),
+                retry_action="journey3.cardform.start",
+                retry_label="Novo pagamento",
+            )
+            async for event in _stream_checkout_widget(
+                self, thread, context, widget, "Pagamento demonstrativo concluido."
+            ):
+                yield event
+            return
+
+        if action.type == "savedcard.select":
+            card = {
+                "card_id": str(payload.get("card_id", "")),
+                "last4": str(payload.get("last4", "----")),
+                "brand": str(payload.get("brand", "Cartao")),
+                "cardholder_name": str(payload.get("cardholder_name", "")),
+            }
+            thread.metadata["savedcard_selected_card"] = card
+            thread.metadata["active_journey"] = 2
+            await self.store.save_thread(thread, context=context)
+            widget = build_saved_card_order_widget(card)
+            async for event in _stream_checkout_widget(
+                self, thread, context, widget, "Revise o pagamento e confirme."
+            ):
+                yield event
+            return
+
+        if action.type == "savedcard.restart":
+            thread.metadata.pop("savedcard_selected_card", None)
+            thread.metadata["active_journey"] = 2
+            await self.store.save_thread(thread, context=context)
+            cards, source = await _load_saved_cards(thread)
+            widget = build_saved_card_selection_widget(cards, source)
+            async for event in _stream_checkout_widget(
+                self, thread, context, widget, "Selecione um cartao salvo para pagar."
+            ):
+                yield event
+            return
+
+        if action.type == "savedcard.pay":
+            async for event in _handle_saved_card_payment(self, thread, context):
+                yield event
+            return
 
         if action.type == "checkout.flow.start":
             flow = normalize_flow(payload.get("flow"))
@@ -417,11 +567,13 @@ async def _handle_checkout_launch(
         result = await client.create_payment_intent(checkout_request)
         widget = build_checkout_result_widget(result)
         copy_text = f"Checkout criado: {result.redirect_url}"
+        checkout_mode = "external" if _get_active_journey(thread) == 2 else "iframe"
         thread.metadata["latest_checkout"] = {
             "payment_intent_id": result.payment_intent_id,
             "redirect_url": result.redirect_url,
             "flow": result.flow.value,
             "status": "created",
+            "mode": checkout_mode,
             "updated_at": datetime.now(timezone.utc).isoformat(),
         }
         thread.metadata.pop("checkout_journey", None)
@@ -462,6 +614,161 @@ def _get_journey(thread: ThreadMetadata) -> dict[str, Any] | None:
     if isinstance(journey, dict):
         return journey
     return None
+
+
+def _coerce_journey(value: Any) -> int:
+    try:
+        journey = int(value)
+    except (TypeError, ValueError):
+        return 1
+    return journey if journey in (1, 2, 3) else 1
+
+
+def _get_active_journey(thread: ThreadMetadata) -> int | None:
+    value = thread.metadata.get("active_journey")
+    if isinstance(value, int) and value in (1, 2, 3):
+        return value
+    return None
+
+
+def _resolve_active_journey(
+    thread: ThreadMetadata, context: dict[str, Any]
+) -> int | None:
+    stored = _get_active_journey(thread)
+    if stored is not None:
+        return stored
+    return _journey_from_context(context)
+
+
+def _journey_from_context(context: dict[str, Any]) -> int | None:
+    request = context.get("request") if isinstance(context, dict) else None
+    headers = getattr(request, "headers", None)
+    if headers is None:
+        return None
+    raw = headers.get("x-journey") or headers.get("X-Journey")
+    if not raw:
+        return None
+    try:
+        journey = int(str(raw).strip())
+    except (TypeError, ValueError):
+        return None
+    return journey if journey in (1, 2, 3) else None
+
+
+def _remember_active_journey(
+    thread: ThreadMetadata, journey: int, context: dict[str, Any]
+) -> None:
+    thread.metadata["active_journey"] = journey
+
+
+def _default_saved_card_customer_id(thread: ThreadMetadata) -> str:
+    stored = str(thread.metadata.get("savedcard_customer_id") or "").strip()
+    if stored:
+        return stored
+    return (
+        os.getenv("CARDS_CUSTOMER_ID")
+        or os.getenv("GETNET_CUSTOMER_ID")
+        or "12345678900"
+    )
+
+
+async def _load_saved_cards(
+    thread: ThreadMetadata,
+) -> tuple[list[dict[str, Any]], str]:
+    customer_id = _default_saved_card_customer_id(thread)
+
+    try:
+        client = GetnetWalletClient.from_env()
+        payload = await client.list_cards(customer_id)
+        cards = [
+            card
+            for card in normalize_wallet_card_rows(payload)
+            if card.get("card_id")
+        ]
+        if cards:
+            return cards, "wallet"
+    except Exception:
+        pass
+
+    return normalize_wallet_card_rows(MOCK_JOURNEY3_CARDS), "mock"
+
+
+async def _handle_journey1_pay(
+    server: "StarterChatServer",
+    thread: ThreadMetadata,
+    context: dict[str, Any],
+) -> AsyncIterator[ThreadStreamEvent]:
+    thread.metadata["active_journey"] = 1
+    try:
+        checkout_request = build_demo_request(CheckoutFlow.PAYMENT, amount=1)
+        client = GetnetClient.from_env()
+        result = await client.create_payment_intent(checkout_request)
+        widget = build_checkout_result_widget(result)
+        copy_text = f"Link do webcheckout gerado: {result.redirect_url}"
+    except Exception as exc:
+        widget = build_checkout_error_widget(str(exc))
+        copy_text = "Falha ao gerar o link do webcheckout."
+
+    await server.store.save_thread(thread, context=context)
+    async for event in _stream_checkout_widget(
+        server, thread, context, widget, copy_text
+    ):
+        yield event
+
+
+async def _handle_saved_card_payment(
+    server: "StarterChatServer",
+    thread: ThreadMetadata,
+    context: dict[str, Any],
+) -> AsyncIterator[ThreadStreamEvent]:
+    card = thread.metadata.get("savedcard_selected_card")
+    if not isinstance(card, dict) or not card.get("card_id"):
+        widget = build_payment_result_widget(
+            False, "Nenhum cartao selecionado para o pagamento."
+        )
+        async for event in _stream_checkout_widget(
+            server, thread, context, widget, "Selecione um cartao para pagar."
+        ):
+            yield event
+        return
+
+    brand = str(card.get("brand") or "Cartao")
+    last4 = str(card.get("last4") or "----")
+
+    # Journey 2 is a demonstration flow: no real charge is performed, the
+    # payment is always presented as concluded.
+    message = (
+        f"Pagamento de R$ 0,01 concluido (demonstracao) com o cartao "
+        f"{brand} final {last4}."
+    )
+    widget = build_payment_result_widget(True, message)
+
+    async for event in _stream_checkout_widget(
+        server, thread, context, widget, "Resultado do pagamento."
+    ):
+        yield event
+
+
+def _detect_card_brand(card_number: str) -> str:
+    digits = "".join(ch for ch in card_number if ch.isdigit())
+    if not digits:
+        return "Cartao"
+    if digits.startswith("4"):
+        return "Visa"
+    if digits[:2] in {"51", "52", "53", "54", "55"} or (
+        len(digits) >= 4 and 2221 <= int(digits[:4]) <= 2720
+    ):
+        return "Mastercard"
+    if digits[:2] in {"34", "37"}:
+        return "Amex"
+    if digits[:4] in {"6011"} or digits[:2] == "65":
+        return "Discover"
+    return "Cartao"
+
+
+def _last_four(card_number: str) -> str:
+    digits = "".join(ch for ch in card_number if ch.isdigit())
+    return digits[-4:] if len(digits) >= 4 else (digits or "----")
 
 
 def _as_dict(value: Any) -> dict[str, Any]:
